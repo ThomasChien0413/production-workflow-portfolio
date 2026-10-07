@@ -355,7 +355,7 @@ function StatusControl({
               name="sheet-status"
               value={option}
               checked={state === option}
-              disabled={busy}
+              disabled={!interactive || busy}
               onChange={() => setState(option)}
             />
             <span>{SHEET_STATE_LABEL[option]}</span>
@@ -405,7 +405,7 @@ function SheetSubpageMove({
           id="move-sheet-subpage"
           className="cc-select"
           value={subpageId}
-          disabled={busy}
+          disabled={!interactive || busy}
           onChange={(event) => setSubpageId(event.target.value)}
         >
           <option value="">請選擇</option>
@@ -485,7 +485,7 @@ function DueDateForm({
         name="dueAt"
         type="datetime-local"
         value={dueLocal}
-        disabled={busy}
+        disabled={!interactive || busy}
         onChange={(event) => setDueLocal(event.target.value)}
         help="以你裝置的時間輸入，系統會以台北時間顯示給所有人。逾期後每天提醒部門主管一次。"
       />
