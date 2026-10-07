@@ -1,0 +1,12 @@
+-- 訂單人員 becomes a department membership alongside 主管 and 員工.
+--
+-- Added for 平板剪, where the person who takes a customer's order opens the
+-- 裁剪需求表 and fills the order side before the 主管 fills the production side.
+-- It is a membership rather than a global role because global roles are
+-- company-wide singletons here, and order-taking is a job several people may
+-- hold in more than one department.
+--
+-- Additive only: every existing membership stays MANAGER or STAFF, and code
+-- that has not been taught the new value keeps reading the old two unchanged.
+-- Postgres cannot remove an enum value, so this is one-way by design.
+ALTER TYPE "department_membership_kind" ADD VALUE IF NOT EXISTS 'ORDER_TAKER';

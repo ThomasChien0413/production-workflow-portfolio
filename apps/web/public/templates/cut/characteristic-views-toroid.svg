@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" width="200" height="130" role="img">
+  <title>特性檢驗報告單（信太） A、B、C、D 量測位置</title>
+  <desc>Redrawn from the grouped shapes of the 信太版本 2.0 worksheet of 特性檢驗表.xls: a toroidal core from above and from the side, with the arrows and letters that say what A, B, C and D measure.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0L8 4L0 8z" fill="#000" />
+    </marker>
+  </defs>
+  <g fill="none" stroke="#000" stroke-width="1">
+    <!-- Toroid, from above: A its build, B its bore, C across it. -->
+    <ellipse cx="46" cy="49.5" rx="38" ry="36.5" />
+    <circle cx="46.5" cy="49" r="18.5" />
+    <line x1="47" y1="14" x2="47" y2="30" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+    <line x1="28" y1="49" x2="65" y2="49" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+    <path d="M43 12H111M42 86H114" />
+    <line x1="92" y1="13" x2="92" y2="86" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+    <!-- From the side: D its width. -->
+    <rect x="150" y="9" width="29" height="82" />
+    <path d="M150 93V121M179 93V121" />
+    <line x1="150" y1="104" x2="179" y2="104" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#000">
+    <text x="57" y="27">A</text>
+    <text x="47" y="62">B</text>
+    <text x="111" y="55">C</text>
+    <text x="164" y="120">D</text>
+  </g>
+</svg>

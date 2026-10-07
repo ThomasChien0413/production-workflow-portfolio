@@ -1,0 +1,1953 @@
+/* =============================================================================
+   Workflow Portfolio — Base and component styles
+   Owner: Claude Design. Consumed by packages/ui.
+   Depends on tokens.css.
+   ============================================================================= */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+/* Inside the app, the scrollbar's room is kept whether or not the page
+   scrolls, so moving between a long page and a short one does not shift
+   everything sideways by the scrollbar's width: a subpage full of sheets
+   beside an empty one (the user, 2026-10-03). The sign-in screen, outside
+   the app frame, is left as it was. */
+html:has(.cc-shell) { scrollbar-gutter: stable; }
+
+body {
+  margin: 0;
+  font-family: var(--cc-font-sans);
+  font-size: var(--cc-size-body);
+  line-height: var(--cc-leading-body);
+  letter-spacing: var(--cc-tracking-normal);
+  color: var(--cc-text-primary);
+  background: var(--cc-surface-canvas);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Numbers, dates, sheet numbers and quantities align in columns. */
+.cc-tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
+/* -----------------------------------------------------------------------------
+   Focus. One visible treatment everywhere. Never remove without replacement.
+   ----------------------------------------------------------------------------- */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: var(--cc-focus-width) solid var(--cc-focus);
+  outline-offset: var(--cc-focus-offset);
+  border-radius: var(--cc-radius-sm);
+}
+.cc-on-inverse :where(a, button, [tabindex]):focus-visible {
+  outline-color: var(--cc-focus-inverse);
+}
+
+/* -----------------------------------------------------------------------------
+   Typography helpers
+   ----------------------------------------------------------------------------- */
+.cc-display { font-size: var(--cc-size-display); line-height: var(--cc-leading-display); font-weight: var(--cc-weight-bold); color: var(--cc-text-heading); margin: 0; }
+.cc-h1 { font-size: var(--cc-size-h1); line-height: var(--cc-leading-h1); font-weight: var(--cc-weight-bold); color: var(--cc-text-heading); margin: 0; }
+.cc-h2 { font-size: var(--cc-size-h2); line-height: var(--cc-leading-h2); font-weight: var(--cc-weight-bold); color: var(--cc-text-heading); margin: 0; }
+.cc-h3 { font-size: var(--cc-size-h3); line-height: var(--cc-leading-h3); font-weight: var(--cc-weight-medium); color: var(--cc-text-heading); margin: 0; }
+.cc-body { font-size: var(--cc-size-body); line-height: var(--cc-leading-body); margin: 0; }
+.cc-body-sm { font-size: var(--cc-size-body-sm); line-height: var(--cc-leading-body-sm); margin: 0; }
+.cc-caption { font-size: var(--cc-size-caption); line-height: var(--cc-leading-caption); color: var(--cc-text-muted); margin: 0; }
+.cc-overline {
+  font-size: var(--cc-size-overline); line-height: var(--cc-leading-overline);
+  letter-spacing: var(--cc-tracking-overline); text-transform: uppercase;
+  font-weight: var(--cc-weight-medium); color: var(--cc-text-muted); margin: 0;
+}
+.cc-muted { color: var(--cc-text-muted); }
+.cc-secondary { color: var(--cc-text-secondary); }
+
+a {
+  color: var(--cc-text-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+a:hover { color: var(--cc-action-hover); text-decoration-thickness: 2px; }
+
+/* -----------------------------------------------------------------------------
+   Responsive swap utilities.
+
+   DESIGN.md section 3.3 requires dense tabular data to become labelled cards
+   below 768px. Both markups exist in the DOM and one is hidden, rather than
+   reflowing a single table with CSS — a table reflowed into blocks loses its
+   header association and reads as an unlabelled list to a screen reader.
+   `display: none` removes the hidden copy from the accessibility tree entirely,
+   so neither is announced twice.
+
+   The doubled class is deliberate. These utilities are declared before the
+   layout helpers, and `.cc-stack { display: flex }` would otherwise win on
+   source order at equal specificity and un-hide the wrong copy. Doubling raises
+   specificity to (0,2,0) so the utility beats any single-class display rule
+   regardless of where it sits in the file.
+   ----------------------------------------------------------------------------- */
+.cc-only-wide.cc-only-wide { display: none; }
+@media (min-width: 768px) {
+  .cc-only-wide.cc-only-wide { display: revert; }
+  .cc-only-narrow.cc-only-narrow { display: none; }
+}
+
+/* Screen-reader-only text. Used for every status icon's text alternative. */
+.cc-sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  inset: 0 auto auto 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* =============================================================================
+   Buttons
+   Sizes: sm 36px (desktop-only dense toolbars), md 44px (default, meets the
+   44x44 touch minimum), lg 52px (mobile primary and sticky action bars).
+   ============================================================================= */
+.cc-btn {
+  --_bg: transparent;
+  --_fg: var(--cc-action);
+  --_bd: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cc-space-2);
+  min-height: var(--cc-tap-min);
+  min-width: var(--cc-tap-min);
+  padding: 0 var(--cc-space-4);
+  font-family: inherit;
+  font-size: var(--cc-size-body-sm);
+  font-weight: var(--cc-weight-medium);
+  line-height: 1;
+  color: var(--_fg);
+  background: var(--_bg);
+  border: 1px solid var(--_bd);
+  border-radius: var(--cc-radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--cc-duration-fast) var(--cc-ease-standard),
+    border-color var(--cc-duration-fast) var(--cc-ease-standard),
+    color var(--cc-duration-fast) var(--cc-ease-standard);
+}
+.cc-btn--sm { min-height: 36px; padding: 0 var(--cc-space-3); font-size: var(--cc-size-caption); }
+.cc-btn--lg { min-height: 52px; padding: 0 var(--cc-space-6); font-size: var(--cc-size-body); }
+.cc-btn--block { width: 100%; }
+
+.cc-btn--primary { --_bg: var(--cc-action); --_fg: var(--cc-text-on-accent); --_bd: var(--cc-action); }
+.cc-btn--primary:hover { --_bg: var(--cc-action-hover); --_bd: var(--cc-action-hover); }
+.cc-btn--primary:active { --_bg: var(--cc-action-pressed); --_bd: var(--cc-action-pressed); }
+
+.cc-btn--secondary { --_bg: var(--cc-surface); --_fg: var(--cc-action); --_bd: var(--cc-border-strong); }
+.cc-btn--secondary:hover { --_bg: var(--cc-action-subtle); --_bd: var(--cc-action); }
+.cc-btn--secondary:active { --_bg: var(--cc-action-subtle-hover); }
+
+.cc-btn--tertiary { --_bg: transparent; --_fg: var(--cc-action); --_bd: transparent; }
+.cc-btn--tertiary:hover { --_bg: var(--cc-action-subtle); }
+.cc-btn--tertiary:active { --_bg: var(--cc-action-subtle-hover); }
+
+.cc-btn--danger { --_bg: var(--cc-danger-solid); --_fg: var(--cc-white); --_bd: var(--cc-danger-solid); }
+.cc-btn--danger:hover { --_bg: var(--cc-danger-fg); --_bd: var(--cc-danger-fg); }
+
+.cc-btn--danger-quiet { --_bg: var(--cc-surface); --_fg: var(--cc-danger-fg); --_bd: var(--cc-danger-outline); }
+.cc-btn--danger-quiet:hover { --_bg: var(--cc-danger-bg); }
+
+.cc-btn:disabled,
+.cc-btn[aria-disabled="true"] {
+  --_bg: var(--cc-action-disabled-bg);
+  --_fg: var(--cc-text-disabled);
+  --_bd: var(--cc-action-disabled-bg);
+  cursor: not-allowed;
+}
+/* A button disabled by authorization must still explain itself; pair it with a
+   tooltip or helper text. Hiding a control is not authorization. */
+
+.cc-btn__icon { width: 18px; height: 18px; flex: none; }
+
+/* =============================================================================
+   Form controls
+   ============================================================================= */
+.cc-field { display: flex; flex-direction: column; gap: var(--cc-space-2); }
+.cc-field + .cc-field { margin-top: var(--cc-space-5); }
+
+.cc-label {
+  font-size: var(--cc-size-body-sm);
+  line-height: var(--cc-leading-body-sm);
+  font-weight: var(--cc-weight-medium);
+  color: var(--cc-text-secondary);
+}
+.cc-label__required { color: var(--cc-danger-fg); margin-inline-start: 2px; }
+.cc-label__optional { color: var(--cc-text-muted); font-weight: var(--cc-weight-regular); margin-inline-start: var(--cc-space-1); }
+
+.cc-input,
+.cc-select,
+.cc-textarea {
+  width: 100%;
+  min-height: var(--cc-tap-min);
+  padding: var(--cc-space-2) var(--cc-space-3);
+  font-family: inherit;
+  font-size: var(--cc-size-body);
+  line-height: var(--cc-leading-body);
+  color: var(--cc-text-primary);
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border-strong);
+  border-radius: var(--cc-radius-md);
+  transition: border-color var(--cc-duration-fast) var(--cc-ease-standard),
+              box-shadow var(--cc-duration-fast) var(--cc-ease-standard);
+}
+.cc-textarea { min-height: 96px; resize: vertical; }
+.cc-select {
+  appearance: none;
+  padding-inline-end: var(--cc-space-8);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2346586E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 8l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--cc-space-3) center;
+  background-size: 20px 20px;
+}
+.cc-input::placeholder,
+.cc-textarea::placeholder { color: var(--cc-text-muted); }
+
+.cc-input:hover, .cc-select:hover, .cc-textarea:hover { border-color: var(--cc-action); }
+
+.cc-input:disabled, .cc-select:disabled, .cc-textarea:disabled,
+.cc-input[readonly] {
+  background: var(--cc-neutral-bg);
+  color: var(--cc-text-disabled);
+  border-color: var(--cc-border);
+  cursor: not-allowed;
+}
+
+/* Invalid state is border + icon + message, never colour alone. */
+.cc-input[aria-invalid="true"],
+.cc-select[aria-invalid="true"],
+.cc-textarea[aria-invalid="true"] {
+  border-color: var(--cc-danger-outline);
+  border-width: 2px;
+}
+
+/* Locked by approval. Distinct from disabled: the value still matters. */
+.cc-input--locked {
+  background: var(--cc-surface-accent);
+  border-style: dashed;
+  border-color: var(--cc-border-accent);
+  color: var(--cc-text-primary);
+}
+
+.cc-help { font-size: var(--cc-size-caption); line-height: var(--cc-leading-caption); color: var(--cc-text-muted); }
+.cc-error {
+  display: flex; align-items: flex-start; gap: var(--cc-space-1);
+  font-size: var(--cc-size-caption); line-height: var(--cc-leading-caption);
+  color: var(--cc-danger-fg); font-weight: var(--cc-weight-medium);
+}
+
+/* Date range: one question with two halves, grouped by a fieldset. The reset
+   is required because the UA default border and inline padding would draw a
+   box around it that no other field group has. */
+.cc-daterange {
+  display: flex; flex-direction: column; gap: var(--cc-space-3);
+  border: 0; padding: 0; margin: 0; min-inline-size: 0;
+}
+/* Heavier than the labels below it. Styled identically, the legend read as a
+   third field label rather than as the name of the pair. */
+.cc-daterange__legend {
+  padding: 0;
+  font-size: var(--cc-size-body-sm);
+  line-height: var(--cc-leading-body-sm);
+  font-weight: var(--cc-weight-bold);
+  color: var(--cc-text-heading);
+}
+/* Two halves side by side only when each gets 200px: on a phone they stack.
+   iOS draws a date as 2026年10月4日 and will not shrink its control below that,
+   so two squeezed 150px halves ran into each other (the user, 2026-10-04). */
+.cc-daterange__pair {
+  display: grid; gap: var(--cc-space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+}
+.cc-daterange__pair .cc-field { min-width: 0; }
+/* iOS WebKit only: its native date control ignores `width` and keeps its own
+   minimum; without its native appearance it fills the field like any input.
+   The value then centres itself, so it is put back at the start. */
+@supports (-webkit-touch-callout: none) {
+  .cc-input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+    display: block;
+  }
+  .cc-input[type="date"]::-webkit-date-and-time-value { text-align: start; }
+}
+/* The pair is already spaced by the grid; the generic sibling rule would add
+   a second, larger gap when the two inputs stack on a narrow screen. */
+.cc-daterange__pair .cc-field + .cc-field { margin-top: 0; }
+.cc-daterange__presets { display: flex; flex-wrap: wrap; gap: var(--cc-space-2); }
+.cc-daterange__presets .cc-btn[aria-pressed="true"] {
+  background: var(--cc-action-subtle);
+  color: var(--cc-action);
+  font-weight: var(--cc-weight-medium);
+}
+
+/* Checkbox / radio: 20px control inside a 44px hit area. */
+.cc-choice {
+  display: flex; align-items: center; gap: var(--cc-space-3);
+  min-height: var(--cc-tap-min); cursor: pointer;
+}
+.cc-choice input { width: 20px; height: 20px; flex: none; accent-color: var(--cc-action); margin: 0; }
+/* 待生產 / 生產中 / 已完成 on the sheet page: one group of radio choices. */
+.cc-status-choice { border: 0; margin: 0; padding: 0; min-width: 0; }
+.cc-status-choice > legend { padding: 0; margin-bottom: var(--cc-space-2); }
+.cc-choice span { font-size: var(--cc-size-body); }
+
+/* Switch */
+.cc-switch { display: inline-flex; align-items: center; gap: var(--cc-space-3); min-height: var(--cc-tap-min); cursor: pointer; }
+.cc-switch__track {
+  position: relative; width: 44px; height: 24px; flex: none;
+  background: var(--cc-neutral-outline); border-radius: var(--cc-radius-full);
+  transition: background-color var(--cc-duration-base) var(--cc-ease-standard);
+}
+.cc-switch__track::after {
+  content: ""; position: absolute; top: 2px; left: 2px;
+  width: 20px; height: 20px; background: var(--cc-white);
+  border-radius: var(--cc-radius-full); box-shadow: var(--cc-shadow-1);
+  transition: transform var(--cc-duration-base) var(--cc-ease-standard);
+}
+.cc-switch input:checked + .cc-switch__track { background: var(--cc-action); }
+.cc-switch input:checked + .cc-switch__track::after { transform: translateX(20px); }
+.cc-switch input { position: absolute; opacity: 0; width: 44px; height: 24px; margin: 0; cursor: pointer; }
+
+/* =============================================================================
+   Badges and status
+   Rule: every badge carries a text label. The dot and the icon are redundant
+   reinforcement, never the only signal.
+   ============================================================================= */
+.cc-badge {
+  --_fg: var(--cc-neutral-fg);
+  --_bg: var(--cc-neutral-bg);
+  --_bd: var(--cc-neutral-border);
+  display: inline-flex; align-items: center; gap: var(--cc-space-2);
+  padding: 2px var(--cc-space-2);
+  font-size: var(--cc-size-caption);
+  line-height: var(--cc-leading-caption);
+  font-weight: var(--cc-weight-medium);
+  color: var(--_fg); background: var(--_bg);
+  border: 1px solid var(--_bd); border-radius: var(--cc-radius-sm);
+  white-space: nowrap;
+}
+.cc-badge__dot { width: 8px; height: 8px; flex: none; border-radius: var(--cc-radius-full); background: currentColor; }
+.cc-badge--success { --_fg: var(--cc-success-fg); --_bg: var(--cc-success-bg); --_bd: var(--cc-success-border); }
+.cc-badge--warning { --_fg: var(--cc-warning-fg); --_bg: var(--cc-warning-bg); --_bd: var(--cc-warning-border); }
+.cc-badge--danger  { --_fg: var(--cc-danger-fg);  --_bg: var(--cc-danger-bg);  --_bd: var(--cc-danger-border); }
+.cc-badge--info    { --_fg: var(--cc-info-fg);    --_bg: var(--cc-info-bg);    --_bd: var(--cc-info-border); }
+.cc-badge--neutral { --_fg: var(--cc-neutral-fg); --_bg: var(--cc-neutral-bg); --_bd: var(--cc-neutral-border); }
+
+/* Count badge for queues and unread notifications. */
+.cc-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; padding: 0 6px;
+  font-size: var(--cc-size-overline); font-weight: var(--cc-weight-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--cc-white); background: var(--cc-danger-solid);
+  border-radius: var(--cc-radius-full);
+}
+.cc-count--neutral { background: var(--cc-neutral-solid); }
+
+/* =============================================================================
+   Alerts
+   ============================================================================= */
+.cc-alert {
+  --_fg: var(--cc-info-fg); --_bg: var(--cc-info-bg); --_bd: var(--cc-info-border);
+  display: flex; gap: var(--cc-space-3);
+  padding: var(--cc-space-4);
+  background: var(--_bg);
+  border: 1px solid var(--_bd);
+  border-inline-start: 4px solid var(--_fg);
+  border-radius: var(--cc-radius-lg);
+}
+.cc-alert--success { --_fg: var(--cc-success-fg); --_bg: var(--cc-success-bg); --_bd: var(--cc-success-border); }
+.cc-alert--warning { --_fg: var(--cc-warning-fg); --_bg: var(--cc-warning-bg); --_bd: var(--cc-warning-border); }
+.cc-alert--danger  { --_fg: var(--cc-danger-fg);  --_bg: var(--cc-danger-bg);  --_bd: var(--cc-danger-border); }
+.cc-alert__icon { width: 20px; height: 20px; flex: none; color: var(--_fg); margin-top: 3px; }
+.cc-alert__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--cc-space-1); }
+.cc-alert__title { font-weight: var(--cc-weight-bold); color: var(--_fg); font-size: var(--cc-size-body-sm); }
+.cc-alert__text { font-size: var(--cc-size-body-sm); line-height: var(--cc-leading-body-sm); color: var(--cc-text-secondary); }
+
+/* =============================================================================
+   Cards
+   ============================================================================= */
+.cc-card {
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border-subtle);
+  border-radius: var(--cc-radius-lg);
+  box-shadow: var(--cc-shadow-1);
+}
+.cc-card__header {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--cc-space-3);
+  padding: var(--cc-space-4) var(--cc-space-5);
+  border-bottom: 1px solid var(--cc-border-subtle);
+}
+.cc-card__body { padding: var(--cc-space-5); }
+.cc-card__footer {
+  padding: var(--cc-space-4) var(--cc-space-5);
+  border-top: 1px solid var(--cc-border-subtle);
+  background: var(--cc-surface-sunken);
+  border-radius: 0 0 var(--cc-radius-lg) var(--cc-radius-lg);
+}
+
+/* Sheet card — the mobile equivalent of one table row. */
+.cc-sheet-card {
+  display: block; width: 100%; text-align: start;
+  padding: var(--cc-space-4);
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border-subtle);
+  border-inline-start: 4px solid var(--cc-neutral-outline);
+  border-radius: var(--cc-radius-lg);
+  box-shadow: var(--cc-shadow-1);
+  cursor: pointer;
+  transition: box-shadow var(--cc-duration-fast) var(--cc-ease-standard);
+}
+.cc-sheet-card:hover { box-shadow: var(--cc-shadow-2); }
+.cc-sheet-card--attention { border-inline-start-color: var(--cc-warning-outline); }
+.cc-sheet-card--overdue { border-inline-start-color: var(--cc-danger-outline); }
+.cc-sheet-card--done { border-inline-start-color: var(--cc-success-outline); }
+.cc-sheet-card--active { border-inline-start-color: var(--cc-border-accent); }
+.cc-sheet-card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--cc-space-3); }
+.cc-sheet-card__no { font-family: var(--cc-font-mono); font-size: var(--cc-size-caption); color: var(--cc-text-muted); }
+/* A sheet is named by its form in the lists, not by its number (the user,
+   2026-09-30). */
+.cc-sheet-card__name { min-width: 0; font-size: var(--cc-size-body); font-weight: var(--cc-weight-medium); color: var(--cc-text-heading); overflow-wrap: anywhere; }
+.cc-sheet-card__title { font-size: var(--cc-size-body); font-weight: var(--cc-weight-medium); color: var(--cc-text-heading); margin: var(--cc-space-1) 0 var(--cc-space-3); }
+.cc-sheet-card__meta { display: grid; grid-template-columns: auto 1fr; gap: var(--cc-space-1) var(--cc-space-3); font-size: var(--cc-size-body-sm); }
+.cc-sheet-card__meta dt { color: var(--cc-text-muted); }
+.cc-sheet-card__meta dd { margin: 0; color: var(--cc-text-primary); }
+/* The sheet page's details box: a value with its 修改 / 移動 beside it, and the
+   editor it unfolds across the full width under the row (the user, 2026-09-30). */
+.cc-sheet-details { align-items: center; }
+.cc-sheet-details__value { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cc-space-2); }
+.cc-sheet-details__editor {
+  grid-column: 1 / -1;
+  display: grid; gap: var(--cc-space-3);
+  padding: var(--cc-space-4);
+  background: var(--cc-surface-sunken);
+  border-radius: var(--cc-radius-md);
+}
+
+/* =============================================================================
+   Table — desktop and tablet only. Below 768px, render .cc-sheet-card instead.
+   ============================================================================= */
+.cc-table-wrap { overflow-x: auto; border-radius: var(--cc-radius-lg); border: 1px solid var(--cc-border-subtle); background: var(--cc-surface); }
+.cc-table { width: 100%; border-collapse: collapse; font-size: var(--cc-size-body-sm); }
+.cc-table thead th {
+  position: sticky; top: 0; z-index: 1;
+  padding: var(--cc-space-3) var(--cc-space-4);
+  text-align: start; white-space: nowrap;
+  font-size: var(--cc-size-caption); font-weight: var(--cc-weight-medium);
+  color: var(--cc-text-secondary);
+  background: var(--cc-surface-sunken);
+  border-bottom: 1px solid var(--cc-border);
+}
+.cc-table tbody td {
+  padding: var(--cc-space-3) var(--cc-space-4);
+  border-bottom: 1px solid var(--cc-border-subtle);
+  vertical-align: middle;
+}
+.cc-table tbody tr:last-child td { border-bottom: 0; }
+.cc-table tbody tr:hover { background: var(--cc-surface-accent); }
+.cc-table tbody tr[aria-selected="true"] { background: var(--cc-surface-accent-strong); }
+.cc-table__num { font-family: var(--cc-font-mono); font-variant-numeric: tabular-nums; color: var(--cc-text-secondary); }
+/* A sortable heading is a link filling the cell, so the whole heading is the
+   target rather than the few characters of its label. The cell keeps its own
+   padding at zero and hands it to the link, otherwise the hit area stops short
+   of the edges people actually aim at. */
+.cc-table th:has(> .cc-th-sort) { padding: 0; }
+.cc-th-sort {
+  display: flex; align-items: center; gap: var(--cc-space-2);
+  width: 100%; min-height: var(--cc-tap-min);
+  padding: var(--cc-space-3) var(--cc-space-4);
+  color: inherit; font: inherit; text-decoration: none;
+  white-space: nowrap;
+}
+.cc-th-sort:hover { color: var(--cc-action); text-decoration: underline; }
+.cc-th-sort--active { color: var(--cc-action); font-weight: var(--cc-weight-bold); }
+/* The direction is carried by the glyph itself, never by colour alone. The
+   inactive pair is dimmed rather than hidden: a column nobody can tell is
+   sortable may as well not be. */
+.cc-th-sort__arrow { font-size: 10px; line-height: 1; letter-spacing: -1px; }
+.cc-th-sort:not(.cc-th-sort--active) .cc-th-sort__arrow { color: var(--cc-text-muted); }
+
+/* =============================================================================
+   Numbered row grid — printed forms with a fixed number of visibly numbered rows
+   (e.g. the eight rows of 分條申請單). The row number is part of the source
+   document and identifies the row to operators, so it is preserved as content
+   rather than generated by CSS counters.
+
+   Two presentations of the same data. Render .cc-rowgrid from 768px, and
+   .cc-rowcard below it — never both, and never a horizontally scrolling table
+   on a phone.
+   ============================================================================= */
+.cc-rowgrid-wrap { overflow-x: auto; border: 1px solid var(--cc-border-subtle); border-radius: var(--cc-radius-lg); background: var(--cc-surface); }
+.cc-rowgrid { width: 100%; border-collapse: collapse; font-size: var(--cc-size-body-sm); }
+.cc-rowgrid thead th {
+  padding: var(--cc-space-3);
+  text-align: start; white-space: nowrap;
+  font-size: var(--cc-size-caption); font-weight: var(--cc-weight-medium);
+  color: var(--cc-text-secondary);
+  background: var(--cc-surface-sunken);
+  border-bottom: 1px solid var(--cc-border);
+}
+.cc-rowgrid tbody td { padding: var(--cc-space-2); border-bottom: 1px solid var(--cc-border-subtle); vertical-align: middle; }
+.cc-rowgrid tbody tr:last-child td { border-bottom: 0; }
+/* The row number column: narrow, tabular, never editable. */
+.cc-rowgrid__no {
+  width: 44px; text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: var(--cc-text-muted);
+  background: var(--cc-surface-sunken);
+  border-inline-end: 1px solid var(--cc-border-subtle);
+}
+.cc-rowgrid .cc-input { min-height: 40px; padding: var(--cc-space-1) var(--cc-space-2); }
+/* A blank row is legitimate until requiredness is confirmed; it must not read
+   as an error state. */
+.cc-rowgrid tbody tr:hover td { background: var(--cc-surface-accent); }
+
+/* Mobile equivalent: one card per numbered row, same field order. */
+.cc-rowcard {
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border-subtle);
+  border-radius: var(--cc-radius-lg);
+  box-shadow: var(--cc-shadow-1);
+  overflow: hidden;
+}
+.cc-rowcard + .cc-rowcard { margin-top: var(--cc-space-3); }
+.cc-rowcard__header {
+  display: flex; align-items: center; gap: var(--cc-space-2);
+  padding: var(--cc-space-2) var(--cc-space-4);
+  background: var(--cc-surface-sunken);
+  border-bottom: 1px solid var(--cc-border-subtle);
+}
+.cc-rowcard__no {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 24px; height: 24px; padding: 0 var(--cc-space-2);
+  font-size: var(--cc-size-caption); font-weight: var(--cc-weight-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--cc-text-inverse); background: var(--cc-neutral-solid);
+  border-radius: var(--cc-radius-full);
+}
+.cc-rowcard__body { padding: var(--cc-space-4); display: flex; flex-direction: column; gap: var(--cc-space-4); }
+
+/* =============================================================================
+   Print-faithful sheet form.
+
+   The user asked for the on-screen sheet to match the supplied image exactly,
+   so the printed arrangement is reproduced rather than reflowed: a header strip
+   carrying 日期 / title / 文件編號, one bordered grid, and the signature row as
+   the final band of that grid.
+
+   This deliberately overrides the card-per-section presentation and the mobile
+   row-card transformation in §3.3. Operators cross-check the screen against
+   paper, and a rearranged screen makes that comparison harder than a table they
+   must pan. The grid scrolls inside its own container on narrow viewports, so
+   the page itself still never scrolls horizontally (AGENTS.md §7).
+   ============================================================================= */
+.cc-formsheet {
+  background: var(--cc-surface); border: 1px solid var(--cc-text-primary);
+  /* Narrow-sheet rules ask the sheet's own width, not the screen's: on a
+     phone the sheet is laid out at a desktop width and scaled (SheetFit). */
+  container: formsheet / inline-size;
+}
+/* A sheet on a phone: laid out at a desktop width and drawn scaled to the
+   room there is, so it looks as it does on a desktop and the reader pinches
+   to zoom in (the user, 2026-10-03). SheetFit sets the scale and the scaled
+   height; the outer box clips the full-width layout the transform leaves
+   behind it. */
+.cc-sheetfit { width: 100%; }
+.cc-sheetfit[data-scaled] { position: relative; overflow: hidden; }
+.cc-sheetfit__page[data-scaled] { position: absolute; top: 0; left: 0; max-width: none; transform-origin: 0 0; }
+.cc-formsheet__head {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--cc-space-3);
+  padding: var(--cc-space-2) var(--cc-space-3);
+}
+.cc-formsheet__title {
+  font-size: var(--cc-size-h2);
+  font-weight: var(--cc-weight-bold);
+  color: var(--cc-text-primary);
+  letter-spacing: 0.3em;
+  text-align: center;
+  margin: 0;
+}
+.cc-formsheet__doc { text-align: end; font-size: var(--cc-size-caption); color: var(--cc-text-primary); }
+.cc-formsheet__date { display: flex; align-items: center; gap: var(--cc-space-2); font-size: var(--cc-size-body-sm); }
+
+/* 分條排刀單 reproduces the XLSX header/footer rather than placing the title
+   in the middle or enclosing the document number in the data grid. */
+.cc-formsheet--document-below { border: 0; }
+.cc-formsheet--title-left-date-right .cc-formsheet__head {
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-width: 640px;
+  min-height: var(--cc-tap-min);
+  padding: 0 var(--cc-space-1);
+  border-bottom: 1px solid var(--cc-text-primary);
+}
+.cc-formsheet--title-left-date-right .cc-formsheet__title {
+  grid-column: 1;
+  grid-row: 1;
+  text-align: start;
+  letter-spacing: 0;
+  font-weight: var(--cc-weight-regular);
+}
+.cc-formsheet--title-left-date-right .cc-formsheet__date {
+  grid-column: 2;
+  grid-row: 1;
+  justify-content: flex-end;
+}
+.cc-formsheet--title-left-date-right .cc-formsheet__doc { display: none; }
+/* 日期 / title / 文件編號 on a phone. Three across leaves the title whatever
+   the date input and the identifier do not need, and 分條申請單 came out a
+   character or two to a line. Below 600px the title takes a line to itself;
+   the date follows, and the identifier sits beside it when it fits and on
+   its own line at the right when it does not — never broken mid-code.
+   Asked of the sheet's width: a phone now shows the sheet at a desktop
+   width, scaled, so this applies only before that scaling takes hold. */
+@container formsheet (max-width: 599px) {
+  .cc-formsheet--date-title-document .cc-formsheet__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    row-gap: var(--cc-space-2);
+  }
+  .cc-formsheet--date-title-document .cc-formsheet__title { flex: 1 0 100%; order: -1; }
+  .cc-formsheet--date-title-document .cc-formsheet__date label { white-space: nowrap; }
+  .cc-formsheet--date-title-document .cc-formsheet__doc {
+    margin-inline-start: auto;
+    white-space: nowrap;
+  }
+}
+.cc-formsheet--title-left-date-right .cc-formsheet__grid thead th {
+  border-top: 0;
+}
+.cc-formsheet--title-left-date-right .cc-formsheet__no { width: auto; }
+.cc-formsheet__footdoc {
+  min-width: 640px;
+  margin: 0;
+  padding: var(--cc-space-2) var(--cc-space-3);
+  text-align: end;
+  font-size: var(--cc-size-body-sm);
+  color: var(--cc-text-primary);
+}
+
+.cc-formsheet__scroll { overflow-x: auto; }
+.cc-formsheet__grid {
+  width: 100%;
+  min-width: 640px; /* below this the printed columns become unreadable */
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.cc-formsheet__grid th,
+.cc-formsheet__grid td {
+  border: 1px solid var(--cc-text-primary);
+  padding: 0;
+  vertical-align: middle;
+}
+.cc-formsheet__grid thead th {
+  padding: var(--cc-space-2);
+  font-size: var(--cc-size-body-sm);
+  font-weight: var(--cc-weight-regular);
+  text-align: center;
+  color: var(--cc-text-primary);
+  background: var(--cc-surface);
+  /* A heading breaks where the paper breaks it: 燒炖質量記錄表 prints 爐號/
+     over 胆號, not 爐號/胆 over 號. */
+  white-space: pre-line;
+}
+/* A heading the paper sets smaller to fit its column (`headingSmall`), so
+   裝箱日/ stays on one line. Caption size, since 12px is never used for CJK. */
+.cc-formsheet__grid thead th.cc-formsheet__heading--small {
+  padding-inline: var(--cc-space-1);
+  font-size: var(--cc-size-caption);
+}
+/* Row number column: printed on the form, so it is content, not decoration. */
+.cc-formsheet__no {
+  width: 44px;
+  text-align: center;
+  font-size: var(--cc-size-body-sm);
+  font-weight: var(--cc-weight-regular);
+  font-variant-numeric: tabular-nums;
+  color: var(--cc-text-primary);
+  background: var(--cc-surface);
+}
+/* Cell inputs are borderless so the grid's own rules form the boxes, exactly
+   as the paper does. Focus still shows the standard ring. */
+.cc-formsheet__cell {
+  width: 100%;
+  min-height: var(--cc-tap-min);
+  padding: var(--cc-space-2);
+  font: inherit;
+  font-size: var(--cc-size-body-sm);
+  color: var(--cc-text-primary);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.cc-formsheet__cell:focus-visible {
+  outline: var(--cc-focus-width) solid var(--cc-focus);
+  outline-offset: -2px;
+}
+.cc-formsheet__cell:read-only { background: var(--cc-surface-sunken); color: var(--cc-text-secondary); }
+
+/* Signature band: label cell then a wide space, repeated across the foot.
+
+   Rendered as a grid rather than a table row because the printed band uses four
+   label/space pairs — eight cells — against the six data columns above, and the
+   paper does not align them either. Forcing it into the table would break the
+   fixed column layout. The first cell matches the row-number width so the left
+   edge still lines up, exactly as it does on the form. */
+.cc-formsheet__signrow {
+  display: grid;
+  grid-template-columns: 44px 1fr 56px 1fr 56px 1fr 56px 1fr;
+  min-width: 640px;
+  border-top: 1px solid var(--cc-text-primary);
+}
+.cc-formsheet__sign,
+.cc-formsheet__signspace {
+  border-inline-end: 1px solid var(--cc-text-primary);
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--cc-size-caption);
+  color: var(--cc-text-primary);
+  line-height: 1.25;
+  text-align: center;
+  padding: var(--cc-space-1);
+}
+.cc-formsheet__signrow > :last-child { border-inline-end: 0; }
+/* Who signed a box, and when (2026-10-01): the name over its time. */
+.cc-formsheet__signspace { flex-direction: column; gap: 2px; }
+.cc-formsheet__signname { font-size: var(--cc-size-body-sm); font-weight: var(--cc-weight-medium); }
+.cc-formsheet__signtime { color: var(--cc-text-secondary); }
+
+/* -----------------------------------------------------------------------------
+   Additional printed structures used by 分條製令單: a matrix band with row
+   groups and an optional 標準值 column, a numbered run, and numbered blanks.
+   All share the grid's borders so the whole sheet reads as one printed box.
+   ----------------------------------------------------------------------------- */
+.cc-formsheet__band { border-top: 1px solid var(--cc-text-primary); }
+.cc-formsheet__band:first-child { border-top: 0; }
+/* A header the definition wraps across printed rows — 裁剪需求表 prints eleven
+   fields as 3/4/4. Each row sizes its label cells to the words in them instead
+   of splitting the width evenly, or 客戶名稱 comes out one character wide. */
+.cc-formsheet__band--wrapped { table-layout: auto; }
+.cc-formsheet__band--wrapped .cc-formsheet__rowlabel { white-space: nowrap; width: 1%; }
+/* A matrix carrying the source's column proportions must keep its headings
+   inside them. Without widths a heading sets its own column, so nowrap is
+   right; with widths a long one — 首件檢驗（依據F/Q-08檢驗） — would print
+   straight across its neighbour instead. */
+.cc-formsheet__band--sized .cc-formsheet__rowlabel { white-space: normal; }
+/* A header on the worksheet's own columns (加工製令單 v2): the columns set
+   every width, so a label wraps inside its cell rather than widening it, and
+   the rows keep their ruling between them. */
+.cc-formsheet__band--grid .cc-formsheet__rowlabel { white-space: normal; }
+.cc-formsheet__band--grid tr + tr > * { border-top: 1px solid var(--cc-text-primary); }
+/* Several values written in one box (`joinNext`): 退火明細表's 程式編號 is
+   `＿ 第 ＿ 程式 ＿`. The boxes share the room; the printed words keep theirs. */
+.cc-formsheet__joined > * { flex: none; }
+/* Each box is ruled underneath, as a write-in line is, so the blank before 第
+   reads as a place to write. */
+.cc-formsheet__joined > .cc-formsheet__cell {
+  flex: 1;
+  min-width: 0;
+  padding-inline: var(--cc-space-1);
+  background-image: linear-gradient(var(--cc-text-primary), var(--cc-text-primary));
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: 0 calc(100% - 10px);
+}
+.cc-formsheet__joined > .cc-formsheet__unit { padding-inline: var(--cc-space-1); }
+/* A drawing beside a band's fields (`asideDrawing`): the A–D views take the
+   room to the right of 出貨數量, and the rows beside it share its height. */
+.cc-formsheet__grid td.cc-formsheet__fieldaside {
+  padding: var(--cc-space-2);
+  vertical-align: middle;
+  text-align: center;
+}
+.cc-formsheet__fieldaside img {
+  display: inline-block;
+  width: 100%;
+  height: auto;
+  max-height: 16rem;
+  object-fit: contain;
+}
+/* A heading's second printed line, e.g. 依據F/Q-08檢驗 beneath 首件檢驗. */
+.cc-formsheet__note {
+  display: block;
+  font-size: var(--cc-size-overline);
+  line-height: 1.2;
+  color: var(--cc-text-primary);
+}
+/* Company stationery printed above the form, e.g. on 加工製令單. Nothing is
+   filled in on it, so it sits outside the ruled box entirely. */
+/* A unit printed inside the write-on cell, e.g. KVA on 裁剪需求表. The
+   operator writes the number beside it, so the two share one box. The unit
+   is aria-hidden because the field's own label already carries it. */
+.cc-formsheet__withunit { display: flex; align-items: center; gap: var(--cc-space-1); }
+.cc-formsheet__withunit > :first-child { flex: 1; min-width: 0; }
+.cc-formsheet__unit {
+  padding-right: var(--cc-space-2);
+  font-size: var(--cc-size-body-sm);
+  color: var(--cc-text-primary);
+  white-space: nowrap;
+}
+.cc-formsheet__letterhead { margin-bottom: var(--cc-space-3); }
+.cc-formsheet__letterhead img { width: 100%; height: auto; }
+/* Over-subscribed on purpose: the labels take what they need and the write-on
+   cells share what is left, instead of the last one taking all of it. */
+.cc-formsheet__band--wrapped td { width: 33%; min-width: 96px; }
+/* Section captions printed inside the box, e.g. 排刀情況: */
+.cc-formsheet__caption {
+  padding: var(--cc-space-2) var(--cc-space-3);
+  font-size: var(--cc-size-body-sm);
+  color: var(--cc-text-primary);
+}
+/* Vertical group label such as 首件檢驗 running down the 序 column. */
+.cc-formsheet__group {
+  width: 32px;
+  text-align: center;
+  font-size: var(--cc-size-caption);
+  color: var(--cc-text-primary);
+  line-height: 1.15;
+  padding: var(--cc-space-1);
+}
+.cc-formsheet__rowlabel {
+  padding: var(--cc-space-1) var(--cc-space-2);
+  font-size: var(--cc-size-caption);
+  text-align: center;
+  color: var(--cc-text-primary);
+  white-space: nowrap;
+}
+/* Qualified by the grid: `.cc-formsheet__grid th` clears every cell's padding
+   and outranks the class alone, which left a printed label such as
+   成品檢查表's 客戶名 touching its rules. Headings keep their own padding. */
+.cc-formsheet__grid tbody th.cc-formsheet__rowlabel {
+  padding: var(--cc-space-1) var(--cc-space-2);
+}
+/* Printed tolerance beside an inspection row. Never editable. */
+.cc-formsheet__standard {
+  padding: var(--cc-space-1) var(--cc-space-2);
+  font-size: var(--cc-size-caption);
+  text-align: center;
+  color: var(--cc-text-primary);
+  background: var(--cc-surface-sunken);
+  white-space: nowrap;
+}
+/* Write-on blanks: an underline rather than a boxed input, as printed. */
+.cc-formsheet__blank {
+  display: flex;
+  align-items: center;
+  gap: var(--cc-space-2);
+  padding: var(--cc-space-3) var(--cc-space-2);
+  font-size: var(--cc-size-body-sm);
+}
+.cc-formsheet__blank input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--cc-tap-min);
+  font: inherit;
+  color: var(--cc-text-primary);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--cc-text-primary);
+  border-radius: 0;
+  padding: 0 var(--cc-space-1);
+}
+.cc-formsheet__blanks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 var(--cc-space-6);
+  padding: 0 var(--cc-space-3) var(--cc-space-2);
+}
+
+/* Printed illustrations, e.g. 積鐵芯疊法 on 裁剪需求表. Nothing here is editable
+   — the drawings are part of the form, the same as the printed column headings
+   — so the band carries no inputs and no focus behaviour. On a phone the three
+   drawings stack rather than shrink to unreadable thumbnails. */
+.cc-formsheet__diagrams {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.cc-formsheet__diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--cc-space-2);
+  padding: var(--cc-space-3);
+  font-size: var(--cc-size-caption);
+  color: var(--cc-text-primary);
+  text-align: center;
+  border-block-start: 1px solid var(--cc-text-primary);
+}
+.cc-formsheet__diagram:first-child { border-block-start: 0; }
+@media (min-width: 768px) {
+  .cc-formsheet__diagrams {
+    grid-template-columns: repeat(var(--cc-diagram-count, 3), minmax(0, 1fr));
+  }
+  /* Side by side, the drawings are divided the way the printed band divides
+     them; stacked on a phone they are divided by the rule above instead. */
+  .cc-formsheet__diagram {
+    border-block-start: 0;
+    border-inline-end: 1px solid var(--cc-text-primary);
+  }
+  .cc-formsheet__diagram:last-child { border-inline-end: 0; }
+}
+.cc-formsheet__diagram img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* =============================================================================
+   Approval status blocks — used where a sheet's approval progress is shown
+   outside the printed grid, for example in the activity timeline.
+   ============================================================================= */
+.cc-approvals { display: grid; gap: var(--cc-space-3); grid-template-columns: 1fr; }
+@media (min-width: 768px) { .cc-approvals { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.cc-approval {
+  padding: var(--cc-space-3);
+  border: 1px solid var(--cc-border-subtle);
+  border-radius: var(--cc-radius-md);
+  background: var(--cc-surface);
+}
+.cc-approval__role { font-size: var(--cc-size-caption); color: var(--cc-text-muted); margin-bottom: var(--cc-space-2); }
+.cc-approval__name { font-size: var(--cc-size-body-sm); font-weight: var(--cc-weight-medium); color: var(--cc-text-primary); }
+.cc-approval__time { font-size: var(--cc-size-caption); color: var(--cc-text-muted); font-variant-numeric: tabular-nums; }
+
+/* =============================================================================
+   Draft template banner — a transcription awaiting confirmation must never be
+   mistaken for an approved form.
+   ============================================================================= */
+.cc-draft-ribbon {
+  display: flex; align-items: center; gap: var(--cc-space-2);
+  padding: var(--cc-space-2) var(--cc-space-4);
+  font-size: var(--cc-size-caption); font-weight: var(--cc-weight-medium);
+  color: var(--cc-warning-fg);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--cc-warning-bg),
+    var(--cc-warning-bg) 10px,
+    var(--cc-surface) 10px,
+    var(--cc-surface) 20px
+  );
+  border-bottom: 2px solid var(--cc-warning-outline);
+}
+@media (prefers-reduced-motion: reduce) { .cc-draft-ribbon { background: var(--cc-warning-bg); } }
+
+/* =============================================================================
+   Tabs
+   ============================================================================= */
+/* The bar scrolls sideways only. Its bottom rule is drawn inside it, so the
+   selected tab's underline covers it without reaching past the bar: a tab
+   pulled 1px below gave the bar 1px to scroll up and down (the user,
+   2026-10-03). */
+.cc-tabs {
+  display: flex; gap: var(--cc-space-1);
+  box-shadow: inset 0 -1px 0 var(--cc-border);
+  overflow-x: auto; overflow-y: hidden;
+}
+.cc-tab {
+  display: inline-flex; align-items: center; gap: var(--cc-space-2);
+  min-height: var(--cc-tap-min); padding: 0 var(--cc-space-4);
+  font-family: inherit; font-size: var(--cc-size-body-sm); font-weight: var(--cc-weight-medium);
+  color: var(--cc-text-secondary); background: none; border: 0;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap; cursor: pointer;
+}
+.cc-tab:hover { color: var(--cc-action); background: var(--cc-action-subtle); }
+.cc-tab[aria-selected="true"],
+.cc-tab[aria-current="page"] { color: var(--cc-action); border-bottom-color: var(--cc-action); }
+/* A tab that is a link: the navigation sense, where each tab is its own URL. */
+a.cc-tab { text-decoration: none; }
+.cc-tab[aria-current="page"] .cc-count { background: var(--cc-action); }
+/* The department's subpages: one bar under the heading, scrolling by itself on
+   a phone so the page never does. */
+.cc-subpage-tabs { scrollbar-width: thin; }
+
+/* =============================================================================
+   Navigation
+   ============================================================================= */
+.cc-sidebar {
+  width: var(--cc-sidebar-width); flex: none;
+  background: var(--cc-surface-inverse); color: var(--cc-text-inverse);
+  display: flex; flex-direction: column; padding: var(--cc-space-4) var(--cc-space-3);
+  gap: var(--cc-space-1);
+}
+.cc-sidebar__brand { display: flex; align-items: center; gap: var(--cc-space-3); padding: var(--cc-space-2) var(--cc-space-3) var(--cc-space-5); }
+/* The company mark heads the navigation, on a white plate: its blues
+   are the paper stationery's and would sink into the dark sidebar. */
+.cc-sidebar__logo {
+  display: block;
+  width: auto;
+  height: 32px;
+  padding: 6px 10px;
+  box-sizing: content-box;
+  border-radius: var(--cc-radius-md);
+  background: var(--cc-white);
+}
+.cc-sidebar__group { padding: var(--cc-space-4) var(--cc-space-3) var(--cc-space-1); color: var(--cc-text-inverse-muted); }
+.cc-nav-item {
+  display: flex; align-items: center; gap: var(--cc-space-3);
+  min-height: var(--cc-tap-min); padding: 0 var(--cc-space-3);
+  border-radius: var(--cc-radius-md);
+  color: var(--cc-text-inverse); text-decoration: none;
+  font-size: var(--cc-size-body-sm); font-weight: var(--cc-weight-medium);
+  transition: background-color var(--cc-duration-fast) var(--cc-ease-standard);
+}
+.cc-nav-item:hover { background: rgba(255, 255, 255, 0.08); color: var(--cc-text-inverse); }
+.cc-nav-item[aria-current="page"] { background: var(--cc-nav-active); }
+.cc-nav-item__badge { margin-inline-start: auto; }
+
+.cc-topbar {
+  display: flex; align-items: center; gap: var(--cc-space-3);
+  height: var(--cc-topbar-height); padding: 0 var(--cc-space-3);
+  background: var(--cc-surface); border-bottom: 1px solid var(--cc-border-subtle);
+  position: sticky; top: 0; z-index: var(--cc-z-sticky);
+}
+.cc-topbar__title { font-size: var(--cc-size-h3); font-weight: var(--cc-weight-bold); color: var(--cc-text-heading); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.cc-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--cc-tap-min); height: var(--cc-tap-min); flex: none;
+  background: none; border: 0; border-radius: var(--cc-radius-md);
+  color: var(--cc-text-secondary); cursor: pointer;
+}
+.cc-icon-btn:hover { background: var(--cc-action-subtle); color: var(--cc-action); }
+/* The menu toggle's three lines: large enough to read at a glance on a phone,
+   and drawn, so they sit centred in the 44×44px button on every device (the
+   user, 2026-10-03). */
+.cc-shell__toggle-icon { display: block; width: 26px; height: 26px; }
+
+/* Sticky mobile action bar. Sits above the safe-area inset. */
+.cc-action-bar {
+  position: sticky; bottom: 0; z-index: var(--cc-z-sticky);
+  display: flex; gap: var(--cc-space-3);
+  padding: var(--cc-space-3) var(--cc-space-4);
+  padding-bottom: calc(var(--cc-space-3) + env(safe-area-inset-bottom, 0px));
+  background: var(--cc-surface);
+  border-top: 1px solid var(--cc-border-subtle);
+  box-shadow: 0 -4px 12px rgba(15, 34, 55, 0.08);
+}
+.cc-action-bar__status { flex: 1; min-width: 0; }
+.cc-pdf-download-status {
+  flex: 1 1 12rem;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--cc-text-muted);
+  font-size: var(--cc-size-caption);
+  line-height: var(--cc-leading-caption);
+}
+.cc-pdf-download-status--error { color: var(--cc-danger-fg); font-weight: var(--cc-weight-medium); }
+@media (max-width: 599px) {
+  .cc-action-bar { flex-wrap: wrap; }
+  .cc-action-bar__status { flex-basis: 100%; }
+  .cc-pdf-download-status { flex-basis: 100%; }
+  .cc-action-bar > .cc-btn { flex: 1 1 120px; }
+}
+
+/* =============================================================================
+   Save / connection state chip
+   Announced through a polite live region; never colour alone.
+   ============================================================================= */
+.cc-save {
+  --_fg: var(--cc-neutral-fg); --_bg: var(--cc-neutral-bg); --_bd: var(--cc-neutral-border);
+  display: inline-flex; align-items: center; gap: var(--cc-space-2);
+  padding: var(--cc-space-1) var(--cc-space-3);
+  font-size: var(--cc-size-caption); font-weight: var(--cc-weight-medium);
+  color: var(--_fg); background: var(--_bg);
+  border: 1px solid var(--_bd); border-radius: var(--cc-radius-full);
+}
+.cc-save--saved { --_fg: var(--cc-success-fg); --_bg: var(--cc-success-bg); --_bd: var(--cc-success-border); }
+.cc-save--saving { --_fg: var(--cc-info-fg); --_bg: var(--cc-info-bg); --_bd: var(--cc-info-border); }
+.cc-save--dirty { --_fg: var(--cc-warning-fg); --_bg: var(--cc-warning-bg); --_bd: var(--cc-warning-border); }
+.cc-save--offline { --_fg: var(--cc-warning-fg); --_bg: var(--cc-warning-bg); --_bd: var(--cc-warning-border); }
+.cc-save--error { --_fg: var(--cc-danger-fg); --_bg: var(--cc-danger-bg); --_bd: var(--cc-danger-border); }
+.cc-save--conflict { --_fg: var(--cc-danger-fg); --_bg: var(--cc-danger-bg); --_bd: var(--cc-danger-border); }
+
+.cc-spinner {
+  width: 14px; height: 14px; flex: none;
+  border: 2px solid currentColor; border-right-color: transparent;
+  border-radius: var(--cc-radius-full);
+  animation: cc-spin 700ms linear infinite;
+}
+@keyframes cc-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  /* Keep a static indicator instead of a spin; pair with visible text. */
+  .cc-spinner { animation: none; border-right-color: currentColor; opacity: 0.5; }
+}
+
+/* Conflict resolution panel */
+.cc-conflict {
+  border: 2px solid var(--cc-danger-outline);
+  border-radius: var(--cc-radius-lg);
+  background: var(--cc-surface);
+  overflow: hidden;
+}
+.cc-conflict__header { padding: var(--cc-space-3) var(--cc-space-4); background: var(--cc-danger-bg); border-bottom: 1px solid var(--cc-danger-border); }
+.cc-conflict__options { display: grid; gap: var(--cc-space-3); padding: var(--cc-space-4); }
+@media (min-width: 768px) { .cc-conflict__options { grid-template-columns: 1fr 1fr; } }
+.cc-conflict__option {
+  padding: var(--cc-space-3);
+  border: 1px solid var(--cc-border); border-radius: var(--cc-radius-md);
+  background: var(--cc-surface-canvas);
+}
+.cc-conflict__value { font-size: var(--cc-size-body); font-weight: var(--cc-weight-medium); color: var(--cc-text-primary); margin-top: var(--cc-space-1); word-break: break-word; }
+
+/* =============================================================================
+   Timeline — approval, routing and activity history
+   ============================================================================= */
+.cc-timeline { list-style: none; margin: 0; padding: 0; }
+.cc-timeline__item { position: relative; padding: 0 0 var(--cc-space-5) var(--cc-space-8); }
+.cc-timeline__item::before {
+  content: ""; position: absolute; inset-inline-start: 11px; top: 22px; bottom: 0;
+  width: 2px; background: var(--cc-border);
+}
+.cc-timeline__item:last-child { padding-bottom: 0; }
+.cc-timeline__item:last-child::before { display: none; }
+.cc-timeline__marker {
+  position: absolute; inset-inline-start: 0; top: 2px;
+  width: 24px; height: 24px; border-radius: var(--cc-radius-full);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--cc-surface); border: 2px solid var(--cc-neutral-outline);
+  color: var(--cc-neutral-fg);
+}
+.cc-timeline__marker--success { border-color: var(--cc-success-outline); color: var(--cc-success-fg); background: var(--cc-success-bg); }
+.cc-timeline__marker--danger { border-color: var(--cc-danger-outline); color: var(--cc-danger-fg); background: var(--cc-danger-bg); }
+.cc-timeline__marker--pending { border-color: var(--cc-warning-outline); color: var(--cc-warning-fg); background: var(--cc-warning-bg); }
+.cc-timeline__marker--info { border-color: var(--cc-border-accent); color: var(--cc-info-fg); background: var(--cc-info-bg); }
+.cc-timeline__title { font-size: var(--cc-size-body-sm); font-weight: var(--cc-weight-medium); color: var(--cc-text-primary); }
+.cc-timeline__meta { font-size: var(--cc-size-caption); color: var(--cc-text-muted); font-variant-numeric: tabular-nums; }
+.cc-timeline__note {
+  margin-top: var(--cc-space-2); padding: var(--cc-space-3);
+  font-size: var(--cc-size-body-sm);
+  background: var(--cc-surface-canvas); border-radius: var(--cc-radius-md);
+  border-inline-start: 3px solid var(--cc-border);
+}
+
+/* =============================================================================
+   Dialog, drawer, toast
+   ============================================================================= */
+.cc-scrim { position: absolute; inset: 0; background: var(--cc-surface-scrim); }
+.cc-dialog {
+  position: relative; width: min(560px, 100%);
+  background: var(--cc-surface); border-radius: var(--cc-radius-xl);
+  box-shadow: var(--cc-shadow-4); overflow: hidden;
+}
+.cc-dialog__header { padding: var(--cc-space-5) var(--cc-space-5) var(--cc-space-3); }
+.cc-dialog__body { padding: 0 var(--cc-space-5) var(--cc-space-5); }
+.cc-dialog__footer {
+  display: flex; justify-content: flex-end; gap: var(--cc-space-3);
+  padding: var(--cc-space-4) var(--cc-space-5);
+  background: var(--cc-surface-sunken); border-top: 1px solid var(--cc-border-subtle);
+}
+@media (max-width: 767px) {
+  /* Bottom sheet on mobile: thumb-reachable, actions stack full width. */
+  .cc-dialog { width: 100%; border-radius: var(--cc-radius-xl) var(--cc-radius-xl) 0 0; margin-top: auto; }
+  .cc-dialog__footer { flex-direction: column-reverse; }
+  .cc-dialog__footer .cc-btn { width: 100%; }
+}
+
+.cc-toast {
+  display: flex; align-items: flex-start; gap: var(--cc-space-3);
+  width: min(420px, 100%); padding: var(--cc-space-4);
+  background: var(--cc-surface); border: 1px solid var(--cc-border-subtle);
+  border-inline-start: 4px solid var(--cc-info-solid);
+  border-radius: var(--cc-radius-lg); box-shadow: var(--cc-shadow-3);
+}
+.cc-toast--success { border-inline-start-color: var(--cc-success-solid); }
+.cc-toast--warning { border-inline-start-color: var(--cc-warning-solid); }
+.cc-toast--danger { border-inline-start-color: var(--cc-danger-solid); }
+
+/* =============================================================================
+   Empty, error, loading
+   ============================================================================= */
+.cc-empty {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: var(--cc-space-3); padding: var(--cc-space-12) var(--cc-space-5);
+}
+.cc-empty__art {
+  width: 56px; height: 56px; border-radius: var(--cc-radius-full);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--cc-surface-accent); color: var(--cc-action);
+}
+.cc-empty__title { font-size: var(--cc-size-h3); font-weight: var(--cc-weight-medium); color: var(--cc-text-heading); }
+.cc-empty__text { font-size: var(--cc-size-body-sm); color: var(--cc-text-muted); max-width: 42ch; }
+
+.cc-skeleton {
+  background: linear-gradient(90deg, var(--cc-grey-50) 25%, var(--cc-grey-100) 37%, var(--cc-grey-50) 63%);
+  background-size: 400% 100%;
+  border-radius: var(--cc-radius-sm);
+  animation: cc-shimmer 1400ms ease-in-out infinite;
+}
+@keyframes cc-shimmer { from { background-position: 100% 50%; } to { background-position: 0 50%; } }
+@media (prefers-reduced-motion: reduce) {
+  .cc-skeleton { animation: none; background: var(--cc-grey-50); }
+}
+
+/* =============================================================================
+   Layout scaffolding
+   ============================================================================= */
+.cc-shell { display: flex; min-height: 100%; background: var(--cc-surface-canvas); }
+.cc-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.cc-page { flex: 1; padding: var(--cc-space-6); max-width: var(--cc-content-max); width: 100%; }
+@media (max-width: 767px) { .cc-page { padding: var(--cc-space-4); } }
+.cc-page__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--cc-space-4); margin-bottom: var(--cc-space-5); flex-wrap: wrap; }
+.cc-stack { display: flex; flex-direction: column; gap: var(--cc-space-4); }
+.cc-row { display: flex; align-items: center; gap: var(--cc-space-3); flex-wrap: wrap; }
+
+/* Form grid: one column on mobile, two from tablet, three on wide desktop. */
+.cc-form-grid { display: grid; gap: var(--cc-space-5); grid-template-columns: 1fr; }
+@media (min-width: 768px) { .cc-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1440px) { .cc-form-grid--dense { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.cc-form-grid__full { grid-column: 1 / -1; }
+/* The grid's gap spaces its fields. The stacked-field margin above would push
+   the second field of a row down by that much again, so 姓名 sat 20px below
+   帳號 (2026-10-01). */
+.cc-form-grid > .cc-field + .cc-field { margin-top: 0; }
+
+/* Account membership matrix: one semantic group per department. The labels
+   collapse into each row on mobile so all three 44px choices remain usable
+   without introducing page-level horizontal scrolling. */
+.cc-membership-matrix {
+  display: grid;
+  gap: var(--cc-space-2);
+}
+.cc-membership-matrix__header,
+.cc-membership-matrix__row {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) repeat(3, minmax(7rem, 0.7fr));
+  gap: var(--cc-space-3);
+  align-items: center;
+}
+.cc-membership-matrix__header {
+  padding: var(--cc-space-2) var(--cc-space-3);
+  color: var(--cc-text-secondary);
+  font-size: var(--cc-size-body-sm);
+  font-weight: var(--cc-weight-medium);
+}
+.cc-membership-matrix__header span:not(:first-child) { text-align: center; }
+.cc-membership-matrix__row {
+  padding: var(--cc-space-2) var(--cc-space-3);
+  border: 1px solid var(--cc-border);
+  border-radius: var(--cc-radius-md);
+  background: var(--cc-surface);
+}
+.cc-membership-matrix__department { font-weight: var(--cc-weight-medium); }
+.cc-membership-matrix__row .cc-choice {
+  justify-self: center;
+  justify-content: center;
+  min-width: var(--cc-tap-min);
+}
+.cc-membership-matrix__mobile-label { display: none; }
+
+.cc-permission-card {
+  padding: var(--cc-space-3);
+  border: 1px solid var(--cc-border);
+  border-radius: var(--cc-radius-md);
+  background: var(--cc-surface);
+}
+.cc-permission-card .cc-row {
+  margin-top: var(--cc-space-2);
+  justify-content: flex-start;
+  gap: var(--cc-space-2);
+}
+.cc-permission-card .cc-choice { min-width: 44px; min-height: 44px; }
+.cc-permission-choice { min-width: 44px; min-height: 44px; justify-content: center; }
+
+/* A card that folds to its header: department subpage settings open one at a
+   time, the rest showing only their name and a one-line summary. The heading
+   is the button (the WAI accordion pattern), so the whole name is the target. */
+.cc-fold__summary { display: grid; gap: var(--cc-space-1); min-width: 0; }
+.cc-fold__toggle {
+  display: inline-flex; align-items: center; gap: var(--cc-space-2);
+  min-height: var(--cc-tap-min); padding: 0 var(--cc-space-2) 0 0; margin: 0;
+  font: inherit; color: inherit; text-align: start;
+  background: none; border: 0; border-radius: var(--cc-radius-sm); cursor: pointer;
+}
+.cc-fold__toggle:hover:not(:disabled) { color: var(--cc-action); }
+.cc-fold__toggle:disabled { cursor: default; }
+.cc-fold__chevron { flex: none; color: var(--cc-text-secondary); transition: transform var(--cc-duration-fast) var(--cc-ease-standard); }
+.cc-fold__toggle[aria-expanded="true"] .cc-fold__chevron { transform: rotate(90deg); color: var(--cc-action); }
+.cc-fold:has(> .cc-card__body[hidden]) > .cc-card__header { border-bottom: 0; }
+@media (max-width: 767px) {
+  .cc-membership-matrix__header { display: none; }
+  .cc-membership-matrix__row {
+    grid-template-columns: 1fr;
+    gap: var(--cc-space-1);
+    padding: var(--cc-space-3);
+  }
+  .cc-membership-matrix__department { margin-bottom: var(--cc-space-1); }
+  .cc-membership-matrix__row .cc-choice { justify-self: stretch; }
+  .cc-membership-matrix__mobile-label { display: inline; }
+}
+
+.cc-breadcrumb { display: flex; align-items: center; gap: var(--cc-space-1); font-size: var(--cc-size-caption); color: var(--cc-text-muted); flex-wrap: wrap; }
+/* Breadcrumb text is small, but the target must not be. Short labels such as
+   「首頁」 are only ~26px wide, well under the 44x44 minimum in AGENTS.md §7, so
+   the link is padded out rather than left as a tiny tap target. */
+.cc-breadcrumb a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--cc-tap-min);
+  min-width: var(--cc-tap-min);
+  padding-inline: var(--cc-space-2);
+  border-radius: var(--cc-radius-sm);
+  color: var(--cc-text-muted);
+  text-decoration: none;
+}
+.cc-breadcrumb a:hover { color: var(--cc-action); background: var(--cc-action-subtle); text-decoration: underline; }
+
+/* =============================================================================
+   Navigation tiles
+
+   The home screen is a launcher: six departments, each a large target that says
+   where it goes and whether the operator belongs to it. Tiles are links, not
+   cards with a button inside — the whole surface is the target, which is what
+   makes them usable one-handed on a workshop floor with gloves on.
+   ============================================================================= */
+.cc-tilegrid { display: grid; gap: var(--cc-space-4); grid-template-columns: 1fr; }
+@media (min-width: 600px) { .cc-tilegrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .cc-tilegrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.cc-tile {
+  display: flex; flex-direction: column; gap: var(--cc-space-2);
+  min-height: 116px; padding: var(--cc-space-5);
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border-subtle);
+  border-inline-start: 3px solid var(--cc-border-subtle);
+  border-radius: var(--cc-radius-lg);
+  box-shadow: var(--cc-shadow-1);
+  color: var(--cc-text-primary);
+  text-decoration: none;
+}
+.cc-tile:hover {
+  border-color: var(--cc-border-accent);
+  box-shadow: var(--cc-shadow-2);
+  color: var(--cc-text-primary);
+  text-decoration: none;
+}
+/* A department the signed-in user actually belongs to. */
+.cc-tile--member { border-inline-start-color: var(--cc-border-accent); }
+.cc-tile__name { font-size: var(--cc-size-h3); line-height: var(--cc-leading-h3); font-weight: var(--cc-weight-medium); color: var(--cc-text-heading); }
+.cc-tile__meta { font-size: var(--cc-size-caption); line-height: var(--cc-leading-caption); color: var(--cc-text-muted); }
+.cc-tile__foot { margin-top: auto; display: flex; align-items: center; gap: var(--cc-space-2); flex-wrap: wrap; }
+
+/* =============================================================================
+   Description list
+
+   Account and department facts read as label/value pairs. Two columns from
+   tablet up, stacked below so long Chinese values never squeeze into a column
+   too narrow to read.
+   ============================================================================= */
+.cc-deflist { display: grid; grid-template-columns: 1fr; gap: var(--cc-space-1) var(--cc-space-4); margin: 0; }
+@media (min-width: 600px) { .cc-deflist { grid-template-columns: minmax(96px, max-content) 1fr; } }
+.cc-deflist dt { font-size: var(--cc-size-caption); color: var(--cc-text-muted); }
+.cc-deflist dd { margin: 0 0 var(--cc-space-3); font-size: var(--cc-size-body-sm); color: var(--cc-text-primary); }
+@media (min-width: 600px) { .cc-deflist dd { margin-bottom: var(--cc-space-2); } }
+
+/* Scrolling surface without the table frame — used by the print-faithful sheet,
+   which brings its own border. Like `.cc-table-wrap`, anything using it must be
+   a focusable region: see the ScrollRegion component in packages/ui. */
+.cc-scroll-x { overflow-x: auto; }
+
+/* =============================================================================
+   Application shell
+
+   One navigation landmark, placed differently by width: a persistent sidebar
+   from 1024px, and a disclosure panel under the top bar below it. Rendering the
+   navigation once rather than twice keeps a single set of links in the
+   accessibility tree — a duplicated menu is announced twice and doubles every
+   tab stop.
+
+   Below 1024px the panel opens over the page from under the top bar, so the
+   page does not move (the user, 2026-10-03). It stays a disclosure, not a
+   modal: nothing traps focus, and a dimmed layer over the rest of the page
+   closes it when tapped, as do the toggle and Escape.
+   ============================================================================= */
+/* Ticks in front of a register's rows (the user, 2026-10-03): 分條's 主管
+   ticks off 分條申請單's rows once it has arrived. No heading; the 20px box
+   sits in a 44px target, and a ticked row is painted green with the tick
+   itself saying so, never colour alone. */
+.cc-formsheet__markcol { width: 52px; }
+.cc-formsheet__grid .cc-formsheet__mark { padding: 0; text-align: center; }
+.cc-formsheet__mark label {
+  display: flex; align-items: center; justify-content: center;
+  min-height: var(--cc-tap-min); cursor: pointer;
+}
+.cc-formsheet__mark input { width: 20px; height: 20px; accent-color: var(--cc-success-solid); }
+.cc-formsheet__mark input:disabled { cursor: default; }
+.cc-formsheet__row--marked > td,
+.cc-formsheet__row--marked > th { background: var(--cc-success-bg); }
+.cc-shell { display: flex; flex-direction: column; min-height: 100%; background: var(--cc-surface-canvas); }
+.cc-shell__nav { display: none; }
+.cc-shell__nav[data-open="true"] {
+  display: flex;
+  position: fixed; top: var(--cc-topbar-height); bottom: 0; left: 0;
+  width: min(320px, 85vw); overflow-y: auto;
+  z-index: var(--cc-z-drawer);
+  box-shadow: var(--cc-shadow-3);
+}
+.cc-shell__scrim {
+  position: fixed; inset: var(--cc-topbar-height) 0 0 0;
+  z-index: var(--cc-z-drawer-scrim);
+  background: var(--cc-surface-scrim);
+}
+.cc-shell__main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+@media (min-width: 1024px) {
+  .cc-shell { flex-direction: row; }
+  .cc-shell__nav,
+  .cc-shell__nav[data-open="true"] {
+    display: flex; position: sticky; top: 0; bottom: auto; height: 100vh; width: var(--cc-sidebar-width);
+    overflow-y: auto; z-index: auto; box-shadow: none;
+  }
+  .cc-shell__scrim { display: none; }
+  .cc-shell__toggle { display: none; }
+  .cc-shell__topbar { display: none; }
+}
+
+/*
+ * A cell the paper rules corner to corner, as CUT's date columns are. The
+ * rule is a background so it sits behind the input and changes neither the
+ * cell's size nor where the value sits; the cell still takes one value.
+ */
+.cc-formsheet__diagonal {
+  background-image: linear-gradient(
+    to top right,
+    transparent calc(50% - 0.5px),
+    var(--cc-color-border-strong, #222) calc(50% - 0.5px),
+    var(--cc-color-border-strong, #222) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}
+
+/* Printed text beside the title, in the slot a header date otherwise fills. */
+.cc-formsheet__headernote {
+  font-weight: 500;
+}
+
+/*
+ * The gap a worksheet leaves between the form and a block printed beside it.
+ * A real column on the paper, ruled nowhere, so it holds the two halves apart
+ * and keeps their rows aligned without a second table.
+ *
+ * Qualified by the grid and the element: `.cc-formsheet__grid th, td` sets the
+ * rule, and a bare class would lose to it and print a border the paper does
+ * not draw.
+ */
+.cc-formsheet__grid th.cc-formsheet__spacer,
+.cc-formsheet__grid td.cc-formsheet__spacer {
+  /*
+   * The paper draws the form's right-hand rule and the weight block's
+   * left-hand one, and nothing between them. Both are set here rather than
+   * left to the neighbours: in a collapsed table the row rules are painted
+   * across this column whatever the cell asks for, and an opaque background
+   * is what actually keeps the gap clear, because a cell's background paints
+   * over the collapsed borders beneath it.
+   */
+  border-top: hidden;
+  border-bottom: hidden;
+  border-left: 1px solid var(--cc-text-primary);
+  border-right: 1px solid var(--cc-text-primary);
+  background: var(--cc-surface);
+  padding: 0;
+}
+
+/*
+ * A cell the form works out. Nobody types in it, so it is not a box — but it
+ * keeps the sunken tint every other read-only cell carries, because that is
+ * how this form says a cell is not yours to fill. An <output> matches
+ * :read-only on its own, so the tint arrives from .cc-formsheet__cell; only
+ * the box around it is taken away.
+ */
+.cc-formsheet__grid .cc-formsheet__computed {
+  display: block;
+  border: 0;
+}
+
+/*
+ * Printed text closing a register inside its box, across every column — the
+ * legend 生產作業看板 prints to say what each 工序 code means. Right-aligned
+ * and bottom-aligned as the worksheet sets it. Qualified by the grid so it
+ * wins over the grid's own zero padding.
+ */
+.cc-formsheet__grid td.cc-formsheet__legend {
+  padding: var(--cc-space-2) var(--cc-space-3);
+  font-size: var(--cc-size-body-sm);
+  color: var(--cc-text-primary);
+  text-align: right;
+  vertical-align: bottom;
+  /* Two merged short rows on the worksheet: a third taller than a row. */
+  height: 3.75rem;
+}
+
+/*
+ * A legend may run to more than one line: 個人生產日報表 breaks its 工作代號
+ * key where the worksheet does, and starts it at the left.
+ */
+.cc-formsheet__grid td.cc-formsheet__legend {
+  white-space: pre-line;
+}
+.cc-formsheet__grid td.cc-formsheet__legend--start {
+  text-align: left;
+  vertical-align: middle;
+  height: 4.5rem;
+}
+
+/*
+ * The title with every header field stacked to its right: 個人生產日報表
+ * prints 姓名 over 日期 there, 生產日報表 its 日期 alone.
+ */
+.cc-formsheet--title-fields-right .cc-formsheet__head {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  min-width: 640px;
+}
+.cc-formsheet--title-fields-right .cc-formsheet__title {
+  grid-column: 1;
+  grid-row: 1;
+}
+.cc-formsheet--title-fields-right .cc-formsheet__date {
+  grid-column: 2;
+  grid-row: 1;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--cc-space-1);
+}
+.cc-formsheet--title-fields-right .cc-formsheet__doc { display: none; }
+.cc-formsheet__headfield {
+  display: flex;
+  align-items: center;
+  gap: var(--cc-space-2);
+}
+.cc-formsheet__headfield label { white-space: nowrap; }
+.cc-formsheet__headfield .cc-formsheet__cell { min-height: 32px; }
+
+/*
+ * Rows printed in blocks, one per person on 生產日報表: the person's number
+ * sits outside the box, their name in a cell running down the block, and a
+ * heavier rule separates one person from the next. Qualified by the grid so
+ * the number cell wins over the grid's own rules — it is printed outside the
+ * box, so it has none.
+ */
+.cc-formsheet__grid th.cc-formsheet__groupno {
+  border: none;
+  padding: 0;
+  background: var(--cc-surface);
+  font-size: var(--cc-size-body-sm);
+  font-weight: var(--cc-weight-regular);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--cc-text-primary);
+}
+.cc-formsheet__grid td.cc-formsheet__groupname { vertical-align: middle; }
+.cc-formsheet__groupname .cc-formsheet__cell { text-align: center; }
+.cc-formsheet__grid--grouped
+  .cc-formsheet__group
+  + .cc-formsheet__group
+  > tr:first-child
+  > td {
+  border-top-width: 3px;
+}
+
+/*
+ * Printed boxes to tick, □OK □NG on CUT成品檢查表. Each choice is a full
+ * tap target; the radio itself stays the native control.
+ */
+.cc-formsheet__choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cc-space-3);
+  padding: 0 var(--cc-space-2);
+}
+.cc-formsheet__choice {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cc-space-1);
+  min-height: var(--cc-tap-min);
+  font-size: var(--cc-size-body-sm);
+  color: var(--cc-text-primary);
+  cursor: pointer;
+}
+.cc-formsheet__choice input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--cc-action);
+}
+/* The line written on after a box, 產品需求表's `□其他：＿＿`: set against
+   its box, as printed. Boxes with a line sit closer together, so the pair
+   and the line share one row even in the 640px grid a phone scrolls. */
+.cc-formsheet__choices--writein {
+  flex-wrap: nowrap;
+  gap: var(--cc-space-2);
+  padding: 0 var(--cc-space-1);
+}
+.cc-formsheet__writein {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  min-width: 2.5em;
+  margin-inline-start: calc(-1 * var(--cc-space-2));
+  font-size: var(--cc-size-body-sm);
+  color: var(--cc-text-primary);
+}
+/* One printed cell holding several boxes (`joinNext`): 沖壓's 生產日報表
+   writes `E: ＿K* ＿箱` side by side, and `E: ＿K` over `I: ＿K`. Each part
+   keeps its own prefix, box and unit. */
+.cc-formsheet__shared--inline > .cc-formsheet__withunit {
+  display: inline-flex;
+  width: 50%;
+  vertical-align: middle;
+}
+/* `E: ＿K* ＿箱`: the weight carries a mark on each side, the count one. */
+.cc-formsheet__shared--inline > .cc-formsheet__withunit:first-child:not(:last-child) {
+  width: 60%;
+}
+.cc-formsheet__shared--inline > .cc-formsheet__withunit:last-child:not(:first-child) {
+  width: 40%;
+}
+.cc-formsheet__grid td.cc-formsheet__shared .cc-formsheet__withunit {
+  padding-inline: 2px;
+}
+.cc-formsheet__grid td.cc-formsheet__shared .cc-formsheet__unit {
+  padding-inline: 1px;
+}
+.cc-formsheet__shared--stacked > .cc-formsheet__withunit {
+  display: flex;
+}
+.cc-formsheet__shared .cc-formsheet__withunit {
+  gap: 2px;
+}
+/* The box takes the room between its prefix and unit; neither printed mark
+   gives way to it. */
+.cc-formsheet__shared .cc-formsheet__withunit > * {
+  flex: none;
+}
+.cc-formsheet__shared .cc-formsheet__withunit > .cc-formsheet__cell {
+  flex: 1;
+  min-width: 0;
+}
+/* C級 and D級 fit `E: ＿K` into the paper's narrowest columns: caption
+   size and no side padding leave four characters of room. */
+.cc-formsheet__grid td.cc-formsheet__shared--stacked .cc-formsheet__withunit {
+  gap: 1px;
+  padding-inline: 2px;
+  font-size: var(--cc-size-caption);
+}
+.cc-formsheet__grid td.cc-formsheet__shared--stacked .cc-formsheet__unit,
+.cc-formsheet__grid td.cc-formsheet__shared--stacked .cc-formsheet__cell {
+  padding-inline: 0;
+  font-size: var(--cc-size-caption);
+}
+.cc-formsheet__shared .cc-formsheet__unit {
+  padding-inline: 2px;
+}
+.cc-formsheet__shared .cc-formsheet__cell {
+  padding-inline: 2px;
+}
+/* A register printed with grouped headings packs fourteen cells across a
+   landscape page — 沖壓's 生產日報表. Its headings sit tighter in their
+   cells, and below 960px the grid scrolls in its box rather than crushing
+   N品 and 待燒 to a character a line. */
+.cc-formsheet__grid--grouped-headings {
+  min-width: 960px;
+}
+.cc-formsheet__grid--grouped-headings thead th {
+  padding-inline: 2px;
+}
+/* 上班's five boxes and its hours keep each label whole. */
+.cc-formsheet__choices--writein .cc-formsheet__choice {
+  white-space: nowrap;
+}
+/* The back of the sheet, below the front: its own box, headed 背面. */
+.cc-formsheet--back {
+  margin-top: var(--cc-space-4);
+}
+.cc-formsheet__side {
+  margin: 0;
+  padding: var(--cc-space-2) var(--cc-space-3);
+  border-bottom: 1px solid var(--cc-text-primary);
+  font-size: var(--cc-size-body);
+  font-weight: var(--cc-weight-bold);
+  color: var(--cc-text-primary);
+}
+/* Underlined like the paper's blank, the line drawn under the text rather
+   than on the row's own rule at the foot of the 44px target. */
+.cc-formsheet__writein .cc-formsheet__cell {
+  flex: 1;
+  min-width: 0;
+  padding-inline: var(--cc-space-1);
+  background-image: linear-gradient(var(--cc-text-primary), var(--cc-text-primary));
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: 0 calc(100% - 10px);
+}
+
+/*
+ * A line of printed text heading a register inside its box — 外觀尺寸, with
+ * 單位: mm set to its right. Qualified by the grid so it wins over the
+ * grid's own heading rules.
+ */
+.cc-formsheet__grid thead th.cc-formsheet__captionrow {
+  position: relative;
+  font-size: var(--cc-size-body);
+  font-weight: var(--cc-weight-bold);
+  letter-spacing: 0.4em;
+}
+.cc-formsheet__captionnote {
+  position: absolute;
+  inset-inline-end: 28%;
+  font-size: var(--cc-size-caption);
+  font-weight: var(--cc-weight-regular);
+  letter-spacing: 0;
+}
+
+/*
+ * A printed cell ruled corner to corner: what the row across holds above
+ * the line, what the column down holds below it.
+ */
+.cc-formsheet__grid th.cc-formsheet__corner,
+.cc-formsheet__reference-table th.cc-formsheet__corner {
+  position: relative;
+  min-height: var(--cc-tap-min);
+  height: var(--cc-tap-min);
+  background-color: var(--cc-surface);
+  background-image: linear-gradient(
+    to top right,
+    transparent calc(50% - 0.5px),
+    var(--cc-color-border-strong, #222) calc(50% - 0.5px),
+    var(--cc-color-border-strong, #222) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+  font-size: var(--cc-size-caption);
+  font-weight: var(--cc-weight-regular);
+  color: var(--cc-text-primary);
+}
+.cc-formsheet__corner-across {
+  position: absolute;
+  top: 2px;
+  inset-inline-end: 4px;
+}
+.cc-formsheet__corner-down {
+  position: absolute;
+  bottom: 2px;
+  inset-inline-start: 4px;
+}
+
+/*
+ * Printed reference closing the form: CUT成品檢查表's core views beside its
+ * 公差 table, inside the box. Side by side where there is room, stacked on
+ * a narrow screen.
+ */
+.cc-formsheet__reference {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cc-space-4);
+  min-width: 640px;
+  padding: var(--cc-space-4);
+  border: 1px solid var(--cc-text-primary);
+  border-top: 0;
+}
+.cc-formsheet__reference-drawing { flex: 1.3 1 280px; min-width: 0; }
+.cc-formsheet__reference-drawing img { width: 100%; height: auto; }
+.cc-formsheet__reference-table {
+  flex: 1 1 240px;
+  border-collapse: collapse;
+  font-size: var(--cc-size-caption);
+  color: var(--cc-text-primary);
+}
+.cc-formsheet__reference-table th,
+.cc-formsheet__reference-table td {
+  border: 1px solid var(--cc-text-primary);
+  padding: 2px var(--cc-space-1);
+  font-weight: var(--cc-weight-regular);
+  text-align: start;
+  font-variant-numeric: tabular-nums;
+}
+.cc-formsheet__reference-table thead th { text-align: center; }
+.cc-formsheet__reference-table thead th small { display: block; }
+
+/*
+ * A register whose standard sits directly under its headings. Where the
+ * paper writes the standard under each letter in one tall cell, no line
+ * divides the heading from it; where it rules a row of its own, the usual
+ * rule stays. Qualified by the grid so it wins over the grid's own rules.
+ */
+.cc-formsheet__grid tr.cc-formsheet__joined > th:not(.cc-formsheet__corner) {
+  border-bottom-style: hidden;
+}
+.cc-formsheet__grid tr.cc-formsheet__standard.cc-formsheet__joined > td {
+  border-top-style: hidden;
+}
+.cc-formsheet__grid tr.cc-formsheet__standard > td { background: var(--cc-surface); }
+
+/* A unit printed in a register's cell after the value: mA, W. */
+.cc-formsheet__grid td .cc-formsheet__withunit { padding-inline-end: var(--cc-space-2); }
+
+/*
+ * The gap between side-by-side blocks of one register — 巧力's 序 1–5 beside
+ * 6–10. A real column, ruled nowhere.
+ */
+.cc-formsheet__grid td.cc-formsheet__blockgap,
+.cc-formsheet__grid thead td.cc-formsheet__blockgap {
+  border-top: hidden;
+  border-bottom: hidden;
+  background: var(--cc-surface);
+  padding: 0;
+}
+
+/*
+ * Printed lines above or below the title, never filled in: 巧力 addresses
+ * its customer's 採購部 and names the company where others print a
+ * letterhead.
+ */
+.cc-formsheet__headerline {
+  min-width: 640px;
+  margin: 0;
+  padding: var(--cc-space-1) var(--cc-space-3);
+  font-size: var(--cc-size-body-sm);
+  color: var(--cc-text-primary);
+}
+.cc-formsheet__headerline--center { text-align: center; font-size: var(--cc-size-body); }
+.cc-formsheet__headerline--end { text-align: end; }
+
+/* A mark below the box at the left, opposite the identifier: VER 2.0. */
+.cc-formsheet__footdoc--noted {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--cc-space-3);
+}
+
+/* A reference band that is only a drawing: 特性檢驗報告單's core views. */
+.cc-formsheet__reference--drawing { justify-content: center; }
+.cc-formsheet__reference--drawing .cc-formsheet__reference-drawing {
+  flex: 0 1 560px;
+}
+.cc-formsheet__reference--drawing .cc-formsheet__reference-drawing img {
+  width: auto;
+  max-width: 100%;
+  max-height: 180px;
+  margin-inline: auto;
+  display: block;
+}
+
+/*
+ * 首件/巡迴檢驗單's printed matrix (`isPrintedMatrix`): the block's name down
+ * the left, when each 製程 round was checked written into its heading, rows
+ * ticked once across several columns, and the core views beside 首件檢驗.
+ * Older matrices keep their own band and none of this touches them.
+ */
+.cc-formsheet__printedmatrix th {
+  padding: var(--cc-space-1);
+  font-size: var(--cc-size-caption);
+  font-weight: var(--cc-weight-regular);
+  text-align: center;
+  color: var(--cc-text-primary);
+}
+.cc-formsheet__printedmatrix th.cc-formsheet__sidelabel {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 0.6em;
+  font-size: var(--cc-size-body);
+}
+.cc-formsheet__printedmatrix th.cc-formsheet__entryheading {
+  white-space: nowrap;
+  text-align: end;
+}
+.cc-formsheet__entrypart {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+.cc-formsheet__entrypart .cc-formsheet__cell {
+  width: 1.8em;
+  padding-inline: 2px;
+  text-align: end;
+}
+.cc-formsheet__printedmatrix .cc-formsheet__choices {
+  flex-wrap: nowrap;
+  gap: 2px var(--cc-space-2);
+  padding: 0 2px;
+}
+/* ✓ and ✗ side by side in 判定, the paper's narrowest column. */
+.cc-formsheet__printedmatrix .cc-formsheet__choice {
+  gap: 2px;
+}
+.cc-formsheet__printedmatrix .cc-formsheet__choice input {
+  width: 18px;
+  height: 18px;
+}
+.cc-formsheet__printedmatrix .cc-formsheet__withunit > .cc-formsheet__unit {
+  flex: none;
+  padding-inline: var(--cc-space-1) 0;
+}
+.cc-formsheet__grid td.cc-formsheet__aside {
+  position: relative;
+  vertical-align: top;
+  padding: 0;
+}
+/* The cell's height is the rows' height; inside it, 類型 at the top, the
+   note at the foot, and the drawing as large as the room between allows. */
+.cc-formsheet__aside-fill {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--cc-space-2);
+}
+.cc-formsheet__aside-choice {
+  display: flex;
+  align-items: center;
+  gap: var(--cc-space-1);
+  font-size: var(--cc-size-body-sm);
+  color: var(--cc-text-primary);
+}
+.cc-formsheet__aside img {
+  display: block;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: contain;
+}
+.cc-formsheet__aside-note {
+  margin: var(--cc-space-2) 0 0 auto;
+  max-width: 14em;
+  padding: var(--cc-space-1) var(--cc-space-2);
+  border: 1px solid var(--cc-text-primary);
+  font-size: var(--cc-size-caption);
+  font-weight: var(--cc-weight-bold);
+  color: var(--cc-text-primary);
+}
+/* 鋼捲號：, and room for several numbers, beside the 公差 table. */
+.cc-formsheet__reference-entry {
+  display: flex;
+  flex: 1 1 240px;
+  flex-direction: column;
+  gap: var(--cc-space-1);
+  align-self: stretch;
+  font-size: var(--cc-size-body-sm);
+  color: var(--cc-text-primary);
+}
+.cc-formsheet__reference-entry textarea {
+  flex: 1;
+  min-height: 6rem;
+}
+/* Below the box, before the identifier: 單位：mm opposite the ✓/✗ key. */
+.cc-formsheet__bottomlines {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--cc-space-3);
+  min-width: 640px;
+  padding: var(--cc-space-1) var(--cc-space-3) 0;
+  font-size: var(--cc-size-body-sm);
+  color: var(--cc-text-primary);
+}

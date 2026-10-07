@@ -1,0 +1,137 @@
+name: workflow-production
+
+x-cloudwatch-logging: &cloudwatch-logging
+  driver: awslogs
+  options:
+    awslogs-region: ${AWS_REGION:?AWS_REGION is required}
+    awslogs-group: /workflow/production
+    awslogs-create-group: "false"
+
+x-service-security: &service-security
+  security_opt:
+    - no-new-privileges:true
+  restart: unless-stopped
+
+services:
+  caddy:
+    <<: *service-security
+    image: caddy:2-alpine
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL is required}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      web:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    networks:
+      - edge
+    logging: *cloudwatch-logging
+
+  web:
+    <<: *service-security
+    image: ${ECR_REGISTRY:?ECR_REGISTRY is required}/workflow-web:${IMAGE_TAG:?IMAGE_TAG is required}
+    environment:
+      NODE_ENV: production
+      API_ORIGIN: ${API_ORIGIN:?API_ORIGIN is required}
+    expose:
+      - "3000"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/healthz').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - edge
+    logging: *cloudwatch-logging
+
+  api:
+    <<: *service-security
+    init: true
+    image: ${ECR_REGISTRY:?ECR_REGISTRY is required}/workflow-api:${IMAGE_TAG:?IMAGE_TAG is required}
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    environment:
+      NODE_ENV: production
+      API_HOST: ${API_HOST:-0.0.0.0}
+      API_PORT: ${API_PORT:-3001}
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      APP_ORIGIN: ${APP_ORIGIN:?APP_ORIGIN is required}
+      SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME:-workflow_session}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-12}
+      LOGIN_LOCK_THRESHOLD: ${LOGIN_LOCK_THRESHOLD:-5}
+      LOGIN_ATTEMPT_WINDOW_MINUTES: ${LOGIN_ATTEMPT_WINDOW_MINUTES:-15}
+      LOGIN_LOCK_MINUTES: ${LOGIN_LOCK_MINUTES:-15}
+      WEB_PUSH_VAPID_PUBLIC_KEY: ${WEB_PUSH_VAPID_PUBLIC_KEY:?WEB_PUSH_VAPID_PUBLIC_KEY is required}
+      AWS_REGION: ${AWS_REGION:?AWS_REGION is required}
+      ATTACHMENT_STORAGE_DRIVER: s3
+      ATTACHMENT_S3_BUCKET: ${ATTACHMENT_S3_BUCKET:?ATTACHMENT_S3_BUCKET is required}
+      ATTACHMENT_S3_PREFIX: ${ATTACHMENT_S3_PREFIX:-attachments}
+      ATTACHMENT_TEMP_DIRECTORY: /tmp/workflow-attachment-uploads
+      ATTACHMENT_MAX_BYTES: ${ATTACHMENT_MAX_BYTES:-95000000}
+      ATTACHMENT_UPLOAD_CONCURRENCY: ${ATTACHMENT_UPLOAD_CONCURRENCY:-2}
+    expose:
+      - "3001"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3001/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - edge
+    logging: *cloudwatch-logging
+
+  worker:
+    <<: *service-security
+    image: ${ECR_REGISTRY:?ECR_REGISTRY is required}/workflow-worker:${IMAGE_TAG:?IMAGE_TAG is required}
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      WORKER_POLL_INTERVAL_MS: ${WORKER_POLL_INTERVAL_MS:-5000}
+      WORKER_BATCH_SIZE: ${WORKER_BATCH_SIZE:-20}
+      WORKER_LOCK_TIMEOUT_MS: ${WORKER_LOCK_TIMEOUT_MS:-300000}
+      PUSH_DELIVERY_MAX_ATTEMPTS: ${PUSH_DELIVERY_MAX_ATTEMPTS:-5}
+      PUSH_DELIVERY_RETRY_BASE_MS: ${PUSH_DELIVERY_RETRY_BASE_MS:-30000}
+      PUSH_DELIVERY_RETRY_MAX_MS: ${PUSH_DELIVERY_RETRY_MAX_MS:-1800000}
+      WEB_PUSH_VAPID_PUBLIC_KEY: ${WEB_PUSH_VAPID_PUBLIC_KEY:?WEB_PUSH_VAPID_PUBLIC_KEY is required}
+      WEB_PUSH_VAPID_PRIVATE_KEY: ${WEB_PUSH_VAPID_PRIVATE_KEY:?WEB_PUSH_VAPID_PRIVATE_KEY is required}
+      WEB_PUSH_SUBJECT: ${WEB_PUSH_SUBJECT:?WEB_PUSH_SUBJECT is required}
+      AWS_REGION: ${AWS_REGION:?AWS_REGION is required}
+      ATTACHMENT_STORAGE_DRIVER: s3
+      ATTACHMENT_S3_BUCKET: ${ATTACHMENT_S3_BUCKET:?ATTACHMENT_S3_BUCKET is required}
+      ATTACHMENT_DELETE_RETRY_BASE_MS: ${ATTACHMENT_DELETE_RETRY_BASE_MS:-30000}
+      ATTACHMENT_DELETE_RETRY_MAX_MS: ${ATTACHMENT_DELETE_RETRY_MAX_MS:-1800000}
+    networks:
+      - edge
+    logging: *cloudwatch-logging
+
+networks:
+  edge:
+
+volumes:
+  caddy_data:
+  caddy_config:

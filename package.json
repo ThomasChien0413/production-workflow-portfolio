@@ -1,0 +1,45 @@
+{
+  "name": "production-workflow-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.16.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "build:web": "pnpm --filter @workflow/web build",
+    "typecheck": "tsc -b --pretty false && pnpm --filter @workflow/ui typecheck && pnpm --filter @workflow/web typecheck",
+    "lint": "oxlint",
+    "pretest": "pnpm build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "pnpm --filter @workflow/web test:e2e",
+    "test:branding": "pnpm --filter @workflow/web exec playwright test --config playwright.branding.config.ts",
+    "publication:audit": "node scripts/publication-audit.mjs",
+    "dev:api": "pnpm --filter @workflow/api dev",
+    "dev:web": "pnpm --filter @workflow/web dev",
+    "dev:worker": "pnpm --filter @workflow/worker dev",
+    "db:generate": "pnpm --filter @workflow/database generate",
+    "db:migrate": "pnpm --filter @workflow/database migrate",
+    "db:seed": "pnpm --filter @workflow/database seed",
+    "db:verify": "pnpm --filter @workflow/database verify",
+    "db:verify-runtime": "pnpm --filter @workflow/database verify:runtime",
+    "ops:validate-example": "node scripts/operations/validate-production-env.mjs deploy/production.env.example --allow-placeholders",
+    "ops:test": "node --test scripts/operations/*.test.mjs",
+    "ops:security-smoke": "node scripts/operations/security-http-smoke.mjs",
+    "ops:load-baseline": "node scripts/operations/load-baseline.mjs",
+    "ops:recovery-rehearsal": "node scripts/operations/recovery-rehearsal.mjs",
+    "push:vapid-keys": "node scripts/operations/generate-vapid-keys.mjs",
+    "ops:reconcile-attachments": "pnpm --filter @workflow/worker reconcile:attachments"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "js-yaml": "4.3.2",
+    "oxlint": "1.85.0",
+    "tsx": "4.23.10",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10"
+  }
+}

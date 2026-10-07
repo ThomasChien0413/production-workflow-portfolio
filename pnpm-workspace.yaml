@@ -1,0 +1,38 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+allowBuilds:
+  argon2: true
+  esbuild: true
+minimumReleaseAgeExclude:
+  - tsx@4.23.10
+overrides:
+  # GHSA-68fv-2mgg-jv7q: indexed source-map offsets can block the event loop.
+  # Pin the compatible upstream patch only for PostCSS (including Next's copy).
+  "postcss>source-map-js": 1.2.2
+  # Patch both fast-uri major lines without changing their consumers' majors.
+  # GHSA-f65p-4m7j-42xc and related URI-normalization advisories block CI audit,
+  # as do GHSA-qw65-cvwx-89v3 (port authority injection) and GHSA-58mr-gqgx-xq4g
+  # (unclosed bracket host confusion), both fixed in 3.1.8 and 4.1.5.
+  "fast-uri@3": 3.1.8
+  "fast-uri@4": 4.1.5
+  # Next 16.3.3 permits this patched release; 0.35.3 is affected by the
+  # libheif advisories grouped in GHSA-rgj7-g3m4-5g8c.
+  # GHSA-wq5f-xc86-pv6w: patched bundled librsvg; no audit exemption.
+  sharp: 0.35.5
+  # GHSA-gxm5-99cw-xjw9: multipart disposition CRLF injection.
+  "@fastify/busboy": 3.2.2
+  "@esbuild-kit/core-utils>esbuild": 0.25.12
+  # Kept from the 16.3.3 bump on main, where Next still resolved sharp 0.35.3
+  # and GHSA-rgj7-g3m4-5g8c needed forcing. 16.3.5 asks for a patched sharp on
+  # its own, so this now only holds the floor if a later Next slips back.
+  "next>sharp": ">=0.35.5"
+  # GHSA: a custom generator can loop indefinitely when size is zero. Reached
+  # only through next > postcss > nanoid, so nothing here calls it, but the
+  # readiness job audits production dependencies at high severity and every
+  # pull request fails until the tree is clean. Drop this once Next ships a
+  # postcss that already asks for a patched nanoid.
+  nanoid: ">=3.3.18"
+  # GHSA advisories against ip-address <=10.7.0, reached only through
+  # @fastify/rate-limit, whose latest release still accepts ^10.2.0.
+  "ip-address": ">=10.7.1"

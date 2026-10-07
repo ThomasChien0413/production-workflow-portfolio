@@ -1,0 +1,285 @@
+/* =============================================================================
+   Workflow Portfolio — Design Tokens
+   Owner: Claude Design. Source of truth for packages/ui.
+   Every colour pair used for text or for a meaningful UI boundary is verified
+   by design-system/verify-contrast.mjs. Do not change a value here without
+   re-running that script.
+   ============================================================================= */
+
+:root {
+  /* ---------------------------------------------------------------------------
+     1. Colour — primitives
+     A single blue ramp plus blue-tinted neutrals. Primitives are not used
+     directly in components; use the semantic aliases in section 2.
+     --------------------------------------------------------------------------- */
+  --cc-blue-50: #EFF5FD;
+  --cc-blue-100: #DCE9F9;
+  --cc-blue-200: #BBD3F1;
+  --cc-blue-300: #8FB6E5;
+  --cc-blue-400: #5B92D4;
+  --cc-blue-500: #2E6FBB;
+  --cc-blue-600: #1D579C;
+  --cc-blue-700: #16447A;
+  --cc-blue-800: #113459;
+  --cc-blue-900: #0C2340;
+
+  --cc-white: #FFFFFF;
+  --cc-grey-25: #F4F7FB;
+  --cc-grey-50: #EAF0F8;
+  --cc-grey-100: #E3EAF3;
+  --cc-grey-200: #C9D7E7;
+  --cc-grey-400: #76899F;
+  --cc-grey-500: #5C6C85;
+  --cc-grey-600: #46586E;
+  --cc-grey-900: #0F2237;
+
+  --cc-green-fg: #146C3E;
+  --cc-green-solid: #17804A;
+  --cc-green-outline: #3D9469;
+  --cc-green-border: #9CCFB5;
+  --cc-green-bg: #E6F4EC;
+
+  --cc-amber-fg: #7A4E00;
+  --cc-amber-solid: #8A5900;
+  --cc-amber-outline: #B07D1F;
+  --cc-amber-border: #EAC489;
+  --cc-amber-bg: #FCF2E0;
+
+  --cc-red-fg: #A3231C;
+  --cc-red-solid: #B3261E;
+  --cc-red-outline: #D1544C;
+  --cc-red-border: #F0B4B0;
+  --cc-red-bg: #FCEBE9;
+
+  --cc-slate-fg: #54637A;
+  --cc-slate-solid: #64748B;
+  --cc-slate-outline: #7F8FA5;
+  --cc-slate-border: #CFD7E2;
+  --cc-slate-bg: #F0F3F7;
+
+  /* ---------------------------------------------------------------------------
+     2. Colour — semantic aliases
+     Components reference only these.
+     --------------------------------------------------------------------------- */
+
+  /* Surfaces */
+  --cc-surface: var(--cc-white);              /* cards, tables, dialogs, inputs */
+  --cc-surface-raised: var(--cc-white);
+  --cc-surface-sunken: var(--cc-grey-50);     /* table headers, inset wells */
+  --cc-surface-canvas: var(--cc-grey-25);     /* page background */
+  --cc-surface-accent: var(--cc-blue-50);     /* selected rows, info wells */
+  --cc-surface-accent-strong: var(--cc-blue-100);
+  --cc-surface-inverse: var(--cc-blue-900);   /* sidebar, tooltips */
+  --cc-surface-scrim: rgba(12, 35, 64, 0.55);
+
+  /* Text — all verified >= 4.5:1 on surface, canvas and sunken */
+  --cc-text-primary: var(--cc-grey-900);
+  --cc-text-heading: var(--cc-blue-900);
+  --cc-text-secondary: var(--cc-grey-600);
+  --cc-text-muted: var(--cc-grey-500);
+  --cc-text-link: var(--cc-blue-600);
+  --cc-text-on-accent: var(--cc-white);
+  --cc-text-inverse: var(--cc-white);
+  --cc-text-inverse-muted: var(--cc-blue-200);
+  /* Disabled text is an inactive control and is exempt from WCAG 1.4.3.
+     Never use it to carry information that is not repeated elsewhere. */
+  --cc-text-disabled: #8794AA;
+
+  /* Borders. -subtle and -default are decorative separators.
+     -strong is the only token allowed for a control boundary that a user must
+     be able to perceive (inputs, selects, checkboxes) — it meets 3:1. */
+  --cc-border-subtle: var(--cc-grey-100);
+  --cc-border: var(--cc-grey-200);
+  --cc-border-strong: var(--cc-grey-400);
+  --cc-border-accent: var(--cc-blue-500);
+  --cc-border-inverse: rgba(255, 255, 255, 0.18);
+
+  /* Interactive blue */
+  --cc-action: var(--cc-blue-600);
+  --cc-action-hover: var(--cc-blue-700);
+  --cc-action-pressed: var(--cc-blue-800);
+  --cc-action-subtle: var(--cc-blue-50);
+  --cc-action-subtle-hover: var(--cc-blue-100);
+  --cc-action-disabled-bg: var(--cc-grey-100);
+  --cc-nav-active: var(--cc-blue-500);
+
+  /* Focus — 2px ring, 2px offset. Verified >= 3:1 on every page surface. */
+  --cc-focus: var(--cc-blue-600);
+  --cc-focus-inverse: var(--cc-white);
+  --cc-focus-width: 2px;
+  --cc-focus-offset: 2px;
+
+  /* Semantic status. Each has fg (text/icon), bg (fill), border (decorative)
+     and outline (meets 3:1, for boundaries that carry meaning). */
+  --cc-success-fg: var(--cc-green-fg);
+  --cc-success-solid: var(--cc-green-solid);
+  --cc-success-outline: var(--cc-green-outline);
+  --cc-success-border: var(--cc-green-border);
+  --cc-success-bg: var(--cc-green-bg);
+
+  --cc-warning-fg: var(--cc-amber-fg);
+  --cc-warning-solid: var(--cc-amber-solid);
+  --cc-warning-outline: var(--cc-amber-outline);
+  --cc-warning-border: var(--cc-amber-border);
+  --cc-warning-bg: var(--cc-amber-bg);
+
+  --cc-danger-fg: var(--cc-red-fg);
+  --cc-danger-solid: var(--cc-red-solid);
+  --cc-danger-outline: var(--cc-red-outline);
+  --cc-danger-border: var(--cc-red-border);
+  --cc-danger-bg: var(--cc-red-bg);
+
+  --cc-neutral-fg: var(--cc-slate-fg);
+  --cc-neutral-solid: var(--cc-slate-solid);
+  --cc-neutral-outline: var(--cc-slate-outline);
+  --cc-neutral-border: var(--cc-slate-border);
+  --cc-neutral-bg: var(--cc-slate-bg);
+
+  --cc-info-fg: var(--cc-blue-700);
+  --cc-info-solid: var(--cc-blue-600);
+  --cc-info-outline: var(--cc-blue-500);
+  --cc-info-border: var(--cc-blue-200);
+  --cc-info-bg: var(--cc-blue-50);
+
+  /* ---------------------------------------------------------------------------
+     3. Typography
+     Traditional Chinese primary. CJK glyphs need a larger optical size and
+     looser leading than Latin, so the body step is 16px/1.625 and no UI text
+     is smaller than 13px.
+     --------------------------------------------------------------------------- */
+  --cc-font-sans: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "PingFang TC",
+    "Microsoft JhengHei", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --cc-font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Consolas,
+    "Noto Sans TC", monospace;
+
+  --cc-weight-regular: 400;
+  --cc-weight-medium: 500;
+  --cc-weight-bold: 700;
+
+  --cc-size-display: 1.75rem;   /* 28px */
+  --cc-size-h1: 1.5rem;         /* 24px */
+  --cc-size-h2: 1.25rem;        /* 20px */
+  --cc-size-h3: 1.125rem;       /* 18px */
+  --cc-size-body-lg: 1.0625rem; /* 17px */
+  --cc-size-body: 1rem;         /* 16px */
+  --cc-size-body-sm: 0.875rem;  /* 14px */
+  --cc-size-caption: 0.8125rem; /* 13px */
+  --cc-size-overline: 0.75rem;  /* 12px — Latin/numeric only, never CJK prose */
+
+  --cc-leading-display: 2.5rem;   /* 40px */
+  --cc-leading-h1: 2.125rem;      /* 34px */
+  --cc-leading-h2: 1.875rem;      /* 30px */
+  --cc-leading-h3: 1.75rem;       /* 28px */
+  --cc-leading-body-lg: 1.75rem;  /* 28px */
+  --cc-leading-body: 1.625rem;    /* 26px */
+  --cc-leading-body-sm: 1.375rem; /* 22px */
+  --cc-leading-caption: 1.25rem;  /* 20px */
+  --cc-leading-overline: 1.125rem;/* 18px */
+
+  --cc-tracking-tight: -0.01em;  /* Latin headings only */
+  --cc-tracking-normal: 0;       /* all CJK text */
+  --cc-tracking-overline: 0.08em;
+
+  /* ---------------------------------------------------------------------------
+     4. Spacing — 4px base
+     --------------------------------------------------------------------------- */
+  --cc-space-0: 0;
+  --cc-space-1: 0.25rem;  /* 4 */
+  --cc-space-2: 0.5rem;   /* 8 */
+  --cc-space-3: 0.75rem;  /* 12 */
+  --cc-space-4: 1rem;     /* 16 */
+  --cc-space-5: 1.25rem;  /* 20 */
+  --cc-space-6: 1.5rem;   /* 24 */
+  --cc-space-8: 2rem;     /* 32 */
+  --cc-space-10: 2.5rem;  /* 40 */
+  --cc-space-12: 3rem;    /* 48 */
+  --cc-space-16: 4rem;    /* 64 */
+
+  /* ---------------------------------------------------------------------------
+     5. Radii
+     --------------------------------------------------------------------------- */
+  --cc-radius-sm: 4px;   /* badges, chips, inline marks */
+  --cc-radius-md: 8px;   /* buttons, inputs, list rows */
+  --cc-radius-lg: 12px;  /* cards, alerts, wells */
+  --cc-radius-xl: 16px;  /* dialogs, drawers, bottom sheets */
+  --cc-radius-full: 999px;
+
+  /* ---------------------------------------------------------------------------
+     6. Elevation — navy-tinted, never neutral black
+     --------------------------------------------------------------------------- */
+  --cc-shadow-1: 0 1px 2px rgba(15, 34, 55, 0.06), 0 1px 3px rgba(15, 34, 55, 0.08);
+  --cc-shadow-2: 0 2px 4px rgba(15, 34, 55, 0.06), 0 4px 12px rgba(15, 34, 55, 0.10);
+  --cc-shadow-3: 0 8px 16px rgba(15, 34, 55, 0.10), 0 16px 32px rgba(15, 34, 55, 0.12);
+  --cc-shadow-4: 0 16px 32px rgba(15, 34, 55, 0.14), 0 32px 64px rgba(15, 34, 55, 0.16);
+
+  /* ---------------------------------------------------------------------------
+     7. Motion
+     --------------------------------------------------------------------------- */
+  --cc-duration-instant: 80ms;
+  --cc-duration-fast: 120ms;
+  --cc-duration-base: 160ms;
+  --cc-duration-slow: 240ms;
+  --cc-duration-deliberate: 320ms;
+
+  --cc-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --cc-ease-decelerate: cubic-bezier(0, 0, 0, 1);
+  --cc-ease-accelerate: cubic-bezier(0.3, 0, 1, 1);
+
+  /* ---------------------------------------------------------------------------
+     8. Layout
+     --------------------------------------------------------------------------- */
+  --cc-sidebar-width: 248px;
+  --cc-sidebar-rail-width: 72px;
+  --cc-topbar-height: 56px;
+  --cc-content-max: 1440px;
+  --cc-form-column-max: 720px;
+  --cc-tap-min: 44px;         /* every interactive target, all breakpoints */
+  --cc-sticky-actions-height: 72px;
+
+  /* Breakpoints are documented here for reference; media queries must use the
+     literal values because custom properties are not valid in @media. */
+  --cc-bp-mobile: 360px;
+  --cc-bp-tablet: 768px;
+  --cc-bp-desktop: 1024px;
+  --cc-bp-wide: 1440px;
+
+  /* ---------------------------------------------------------------------------
+     9. Z-index
+     --------------------------------------------------------------------------- */
+  --cc-z-base: 0;
+  --cc-z-sticky: 100;
+  --cc-z-drawer-scrim: 200;
+  --cc-z-drawer: 210;
+  --cc-z-dialog-scrim: 300;
+  --cc-z-dialog: 310;
+  --cc-z-toast: 400;
+  --cc-z-tooltip: 500;
+}
+
+/* -----------------------------------------------------------------------------
+   Mobile type step-down. CJK headings above 24px crowd a 360px viewport.
+   ----------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  :root {
+    --cc-size-display: 1.5rem;   /* 24px */
+    --cc-size-h1: 1.3125rem;     /* 21px */
+    --cc-size-h2: 1.1875rem;     /* 19px */
+    --cc-leading-display: 2.125rem;
+    --cc-leading-h1: 1.875rem;
+    --cc-leading-h2: 1.75rem;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Reduced motion. Transitions collapse to a near-zero duration rather than 0 so
+   that transitionend handlers still fire.
+   ----------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --cc-duration-instant: 1ms;
+    --cc-duration-fast: 1ms;
+    --cc-duration-base: 1ms;
+    --cc-duration-slow: 1ms;
+    --cc-duration-deliberate: 1ms;
+  }
+}

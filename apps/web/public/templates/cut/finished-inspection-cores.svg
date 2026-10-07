@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" width="300" height="200" role="img">
+  <title>CUT成品檢查表 尺寸位置</title>
+  <desc>Redrawn from the shapes of CUT成品檢查表.doc at their positions in points: a toroidal core seen from above, a core seen from the side, and a rectangular core seen from above, each with the ticks and letters that name what A, B, C and D measure.</desc>
+  <g fill="none" stroke="#000" stroke-width="1">
+    <!-- Toroidal core, from above: outer and inner edges. -->
+    <ellipse cx="78.5" cy="98" rx="59.5" ry="59" />
+    <circle cx="79" cy="99" r="36" />
+    <!-- Its side, whose height is D. -->
+    <rect x="150" y="34" width="34" height="124" />
+    <!-- Rectangular core, from above: outer edge and window. -->
+    <rect x="197" y="34" width="101" height="124" rx="22" ry="22" />
+    <rect x="221" y="52" width="55" height="87" />
+    <!-- C across the window, arrowed both ends. -->
+    <line x1="249" y1="56" x2="249" y2="135" />
+    <!-- Ticks under the views, and over the toroid for C. -->
+    <path d="M19 164V192M43 164V192M110 164V192M150 164V192M184 164V192M197 164V192M221 164V192M277 164V192M19 8V36M138 8V36" />
+  </g>
+  <g fill="#000">
+    <path d="M249 52l-3.5 7h7z" />
+    <path d="M249 139l-3.5 -7h7z" />
+  </g>
+  <g font-family="'Times New Roman', Times, serif" font-size="12" text-anchor="middle" fill="#000">
+    <text x="31" y="183">A</text>
+    <text x="76" y="183">B</text>
+    <text x="167" y="183">D</text>
+    <text x="209" y="183">A</text>
+    <text x="251" y="183">B</text>
+    <text x="76" y="24">C</text>
+    <text x="261" y="100">C</text>
+  </g>
+</svg>

@@ -1,0 +1,25 @@
+{
+  "name": "@workflow/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "dev": "tsx watch src/main.ts",
+    "reconcile:attachments": "tsx src/reconcile-attachments.ts",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "@workflow/attachment-storage": "workspace:*",
+    "@workflow/contracts": "workspace:*",
+    "@workflow/database": "workspace:*",
+    "dotenv": "17.4.2",
+    "drizzle-orm": "0.45.2",
+    "web-push": "3.6.7",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/web-push": "^3.6.4"
+  }
+}

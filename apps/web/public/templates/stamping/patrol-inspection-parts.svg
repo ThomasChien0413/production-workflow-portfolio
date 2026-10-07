@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="290 100 215 210" width="215" height="210" role="img">
+  <title>沖壓・平板剪 首件/巡迴檢驗單 尺寸位置</title>
+  <desc>Redrawn from the shapes of EI+平板剪-首件巡迴檢驗單.xlsx at their positions in points: a sheared strip with three holes, dimensioned A, N, D and K with the hole ∮Ho, and an EI lamination with its two windows and four holes, dimensioned A, K, D and N with ∮Ho.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0L8 4L0 8z" fill="#000" />
+    </marker>
+  </defs>
+  <g fill="none" stroke="#000" stroke-width="1">
+    <!-- 剪片: the strip and its three holes. -->
+    <rect x="348" y="132" width="103.5" height="25.5" />
+    <ellipse cx="369" cy="145.45" rx="6" ry="5.25" />
+    <ellipse cx="399.8" cy="144.75" rx="6" ry="5.25" />
+    <ellipse cx="431.2" cy="145.45" rx="6" ry="5.25" />
+    <!-- Extension lines. -->
+    <path d="M348 119.2V132M451.5 119.2V132M329.2 132H345.7M329.2 157.5H345M348.8 158.2V173.2M362.2 158.2V173.2M407.2 158.2V173.2M426.8 159V174" />
+    <!-- EI: the lamination, the I across its foot, the two windows, four holes. -->
+    <rect x="342.8" y="232.5" width="109.5" height="69.8" />
+    <path d="M343.5 286.5H452.3M362.2 286.6V249H381.8V286.5M415.5 285.7V248.2H434.2V285.7" />
+    <ellipse cx="352.1" cy="243" rx="4.1" ry="4.5" />
+    <ellipse cx="441.3" cy="242.3" rx="4.1" ry="4.5" />
+    <ellipse cx="352.9" cy="294.7" rx="4.1" ry="4.5" />
+    <ellipse cx="442.1" cy="294.7" rx="4.1" ry="4.5" />
+    <path d="M453 214.5V226.5M342.8 214.5V224.3M458.2 285H467.2M458.2 303H468" />
+  </g>
+  <g fill="none" stroke="#000" stroke-width="1" marker-start="url(#arrow)" marker-end="url(#arrow)">
+    <!-- 剪片: A along the top, N the width, D to the first hole, K between holes. -->
+    <line x1="348.8" y1="125.2" x2="450.8" y2="125.2" />
+    <line x1="337.5" y1="132" x2="337.5" y2="157.5" />
+    <line x1="348.8" y1="165.8" x2="361.6" y2="165.8" />
+    <line x1="407.2" y1="165.8" x2="426.7" y2="165.8" />
+    <!-- EI: A across, K the top edge to the window, D to the window, N the I. -->
+    <line x1="342" y1="220.5" x2="453" y2="220.5" />
+    <line x1="372" y1="233.2" x2="372" y2="249" />
+    <line x1="342" y1="273" x2="361.5" y2="273" />
+    <line x1="463.5" y1="285.8" x2="463.5" y2="303" />
+  </g>
+  <!-- ∮Ho: from a hole to its name. -->
+  <line x1="432" y1="147" x2="462.8" y2="147" stroke="#000" stroke-width="1" marker-end="url(#arrow)" />
+  <line x1="352.5" y1="294.8" x2="331.5" y2="294.8" stroke="#000" stroke-width="1" marker-end="url(#arrow)" />
+  <g font-family="'Times New Roman', Times, serif" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="#000">
+    <text x="398.2" y="114.1">A</text>
+    <text x="324.8" y="143">N</text>
+    <text x="356" y="179">D</text>
+    <text x="417.2" y="176.7">K</text>
+    <text x="481.9" y="146.5">∮Ho</text>
+    <text x="397.9" y="210.8">A</text>
+    <text x="387.5" y="240.5">K</text>
+    <text x="354.1" y="263.5">D</text>
+    <text x="476.4" y="293.6">N</text>
+    <text x="313.4" y="295.2">∮Ho</text>
+  </g>
+</svg>

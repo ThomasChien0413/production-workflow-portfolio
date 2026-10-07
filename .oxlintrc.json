@@ -1,0 +1,51 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  // Oxlint rather than ESLint: typescript-eslint needs TypeScript's JavaScript
+  // API, which TypeScript 7 (this repo's compiler) no longer ships, so ESLint
+  // cannot read .ts or .tsx here. Oxlint parses TypeScript itself. Run with
+  // `pnpm lint`; CI runs it in the verify job.
+  "plugins": ["typescript", "unicorn", "oxc", "react", "nextjs", "jsx-a11y"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
+
+    // React Compiler rules. This app does not use the compiler, and what they
+    // flag is deliberate and commented where it happens: the latest value kept
+    // in a ref, a hydration flag set once in an effect, a ref initialised
+    // lazily during render, a reconnect that schedules itself, and Date.now()
+    // in a server component.
+    "react/refs": "off",
+    "react/set-state-in-effect": "off",
+    "react/immutability": "off",
+    "react/purity": "off",
+
+    // Style advice outside jsx-a11y's recommended set. Following it would swap
+    // role="status" / "region" / "group" for other elements and change
+    // existing layouts for no accessibility gain.
+    "jsx-a11y/prefer-tag-over-role": "off",
+    // An empty spacer or gap <td> is not a control; every real input is
+    // labelled and the accessibility suite checks it.
+    "jsx-a11y/control-has-associated-label": [
+      "error",
+      { "ignoreElements": ["audio", "canvas", "embed", "input", "textarea", "tr", "video", "td"] }
+    ]
+  },
+  "settings": {
+    "next": {
+      "rootDir": "apps/web/"
+    }
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/.next/**",
+    "**/test-results/**",
+    "**/playwright-report/**",
+    // Generated: base64 of the printed drawings.
+    "packages/sheet-document/src/diagram-assets.ts",
+    "packages/database/drizzle/**"
+  ]
+}

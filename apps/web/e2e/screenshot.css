@@ -1,0 +1,36 @@
+/*
+ * Applied only while a pixel baseline is captured — never in the product.
+ *
+ * The action bar is `position: sticky` inside the sheet form, so a stitched
+ * capture of anything taller than the viewport prints it across the middle of
+ * the document and hides two rows underneath. It is the application's controls
+ * rather than part of the paper being reproduced, and its status text changes
+ * with the save state, so it stays out of the picture entirely.
+ */
+.cc-action-bar {
+  display: none !important;
+}
+
+/*
+ * The development server's own furniture. The suite runs against `next dev`,
+ * which floats a tools badge over the corner of every page — it is not part of
+ * the product, it will never be in production, and its appearance changes when
+ * Next does, which would turn an upgrade into a wall of false diffs.
+ */
+[data-nextjs-dev-overlay],
+nextjs-portal,
+[data-nextjs-toast],
+next-route-announcer {
+  display: none !important;
+}
+
+/*
+ * The room the app keeps for a scrollbar (base.css, 2026-10-03), so moving
+ * between a long page and a short one does not shift it on Windows. CI's Linux
+ * Chromium draws no scrollbar but still reserves that room, which would make
+ * every picture 15px narrower for nothing a person sees on paper. The pictures
+ * are taken as before; the layout spec checks the gutter itself.
+ */
+html {
+  scrollbar-gutter: auto !important;
+}

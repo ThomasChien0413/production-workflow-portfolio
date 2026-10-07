@@ -1,0 +1,95 @@
+/*
+ * Application-level wiring only. Component and token values belong in
+ * @workflow/ui — do not add design decisions here.
+ */
+
+/* --cc-font-sans is no longer overridden here. It named a hashed family that
+   only next/font knew; the vendored stylesheet declares "Noto Sans TC" under
+   its own name, which is exactly what tokens.css asks for — including the
+   fallbacks behind it, which still carry the page while a slice is in flight
+   and remain correct if the font never loads at all. */
+
+html,
+body {
+  min-height: 100%;
+}
+
+.cc-attachment-upload {
+  display: grid;
+  gap: var(--cc-space-2);
+  max-width: 42rem;
+}
+
+.cc-attachment-upload input:focus-visible + label {
+  outline: var(--cc-focus-width) solid var(--cc-focus);
+  outline-offset: var(--cc-focus-offset);
+  border-radius: var(--cc-radius-sm);
+}
+
+.cc-attachment-upload progress {
+  width: min(22rem, 100%);
+  accent-color: var(--cc-action);
+}
+
+.cc-attachment-filename {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.cc-attachment-actions {
+  flex-wrap: wrap;
+  margin-top: var(--cc-space-3);
+}
+
+.cc-attachment-confirm {
+  display: grid;
+  gap: var(--cc-space-2);
+  max-width: 30rem;
+  padding: var(--cc-space-3);
+  color: var(--cc-danger-fg);
+  background: var(--cc-danger-bg);
+  border: 1px solid var(--cc-danger-outline);
+  border-radius: var(--cc-radius-md);
+}
+
+.cc-attachment-card {
+  cursor: default;
+}
+
+/* Centred single-card layout used by /login and /connect-line. */
+.cc-auth {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cc-space-5);
+  padding: var(--cc-space-6) var(--cc-space-4);
+}
+
+/* The company mark over what the system is. */
+.cc-auth__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--cc-space-2);
+}
+
+.cc-auth__logo {
+  display: block;
+  width: auto;
+  height: 48px;
+}
+
+.cc-auth__panel {
+  width: 100%;
+  max-width: 420px;
+}
+
+@media (max-width: 767px) {
+  /* Top-aligned on phones so the card is not pushed under the keyboard. */
+  .cc-auth {
+    justify-content: flex-start;
+    padding-top: var(--cc-space-10);
+  }
+}

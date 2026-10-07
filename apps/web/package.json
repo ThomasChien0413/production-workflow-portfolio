@@ -1,0 +1,30 @@
+{
+  "name": "@workflow/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@workflow/contracts": "workspace:*",
+    "@workflow/domain": "workspace:*",
+    "@workflow/sheet-document": "workspace:*",
+    "@workflow/ui": "workspace:*",
+    "next": "16.3.7",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@playwright/test": "1.62.1",
+    "dotenv": "17.4.2",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "postgres": "3.4.9"
+  }
+}

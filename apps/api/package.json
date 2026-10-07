@@ -1,0 +1,32 @@
+{
+  "name": "@workflow/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@workflow/attachment-storage": "workspace:*",
+    "@workflow/contracts": "workspace:*",
+    "@workflow/database": "workspace:*",
+    "@workflow/domain": "workspace:*",
+    "@workflow/sheet-document": "workspace:*",
+    "@fastify/cookie": "11.1.2",
+    "@fastify/cors": "11.3.0",
+    "@fastify/helmet": "13.1.0",
+    "@fastify/multipart": "9.3.0",
+    "@fastify/rate-limit": "11.2.0",
+    "@fastify/sensible": "6.0.4",
+    "@fastify/websocket": "11.3.0",
+    "argon2": "0.45.1",
+    "dotenv": "17.4.2",
+    "drizzle-orm": "0.45.2",
+    "fastify": "5.12.5",
+    "playwright": "1.62.1",
+    "zod": "4.4.3"
+  }
+}

@@ -1,0 +1,70 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: workflow_demo
+      POSTGRES_USER: workflow
+      POSTGRES_PASSWORD: workflow_local
+      TZ: Asia/Taipei
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - workflow_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U workflow -d workflow_demo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    environment:
+      NODE_ENV: development
+      API_HOST: 0.0.0.0
+      API_PORT: 3001
+      DATABASE_URL: postgres://workflow:workflow_local@postgres:5432/workflow_demo
+      APP_ORIGIN: http://localhost:3000
+      ATTACHMENT_STORAGE_DRIVER: filesystem
+      ATTACHMENT_LOCAL_DIRECTORY: /var/lib/workflow/attachments
+      ATTACHMENT_TEMP_DIRECTORY: /tmp/workflow-attachment-uploads
+    volumes:
+      - workflow_attachments:/var/lib/workflow/attachments
+    ports:
+      - "127.0.0.1:3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/worker.Dockerfile
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgres://workflow:workflow_local@postgres:5432/workflow_demo
+      WORKER_POLL_INTERVAL_MS: 5000
+      ATTACHMENT_STORAGE_DRIVER: filesystem
+      ATTACHMENT_LOCAL_DIRECTORY: /var/lib/workflow/attachments
+    volumes:
+      - workflow_attachments:/var/lib/workflow/attachments
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+    environment:
+      API_ORIGIN: http://api:3001
+      APP_ORIGIN: http://localhost:3000
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  workflow_postgres:
+  workflow_attachments:
