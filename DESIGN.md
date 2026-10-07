@@ -10,6 +10,8 @@ Home Screen resources use the same centered white `WF` on medium-blue square art
 
 ## Engineering
 
+History browser verification identifies records by their exact sheet-detail link, not a template title shared by many records. Keep duplicate-template fixtures to exercise clear/reset and browser Back; restored URL state must agree with rendered filters and results before proceeding. This is test isolation, not a product layout or search-policy change.
+
 Subpage placement controls must remain disabled until their own client component is interactive, including the selector as well as the mutation button. Otherwise a selection made on server HTML may not reach React state. The same readiness rule applies to production-status radios and the due-date input. Preserve layouts and workflow permissions. Regression tests hold JavaScript loading at the destination-manager boundary, verify the server controls cannot accept input, then release hydration and complete the real workflow without repeated clicks or synthetic event handlers.
 
 - TypeScript/pnpm monorepo: Next.js web, Fastify REST/WebSocket API, durable background worker, PostgreSQL, shared runtime validation and domain policies.
