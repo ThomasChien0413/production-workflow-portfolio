@@ -7,12 +7,23 @@ Date: 2026-10-07 (Pacific/Auckland). Repository: `production-workflow-portfolio`
 | Work | Owner | Status | Scope |
 | --- | --- | --- | --- |
 | Independent sanitized portfolio setup | GPT | Published and verified | Public portfolio only; merged main `304e58e` passed verify, branding and containers on run `37571333913` |
-| Home Screen icon regression | GPT | Merged | PR #1 passed all public CI jobs (`37569075198`) and was squash-merged as `304e58e`; main verification is running |
-| Interview-ready demo walkthrough | GPT | Active | `codex/portfolio-demo-walkthrough`: optional local synthetic accounts/subpages, repeat-safe fixture tests, README badge/examples and handoff; no company data or hosting |
+| Home Screen icon regression | GPT | Merged and verified | PR #1 and its merged main `304e58e` passed all three CI jobs |
+| Interview-ready demo walkthrough | GPT | Merged; main regression tracked below | PR #2 passed all three jobs on `37574224587`, merged as `08d3509`; subsequent main failed the mobile placement flaky-test gate |
+| Subpage-placement hydration regression | GPT | Active | `codex/portfolio-workflow-hydration`: production-actions readiness and mobile/desktop workflow regression; portfolio only |
 
 The user confirms permission to share code, all sheets and letterheads, while removing operational details. The original company repository, Git history, runner, server, database, DNS and credentials must remain unchanged.
 
 ## Checklist
+
+PR #2 was squash-merged as `08d3509` after all PR checks passed. Main run `37577770011` failed the strict flaky-test gate: mobile subpage placement timed out on its first attempt and passed on retry; branding passed and containers were skipped. Investigate the unguarded placement selector before hydration; retain retry diagnostics, fail-on-flaky behavior and every workflow assertion. No company changes are authorized by this fix.
+
+### Hydration fix validation — 2026-10-07
+
+- Subpage selector, status radios and due-date input now share their component's readiness guard with the action button; no layout, API, template or permission changes.
+- The destination-manager workflow deliberately holds Next.js JavaScript loading, verifies the server-rendered selector/button are disabled, releases scripts and completes real placement, deadline, review, completion, archive/restore and deletion. No sleep, repeated clicks or increased timeout. The placement response wait is bounded at 30 seconds for useful failure diagnostics.
+- Red/green proof: temporarily restoring only the old selector behavior fails the new mobile assertion (`Expected disabled; received enabled`); restored fix passes mobile and desktop. A second run with two workers and three repetitions each passes **7/7 tests including setup**, with retries disabled.
+- Typecheck, lint, optimized web build and **21 operations tests** pass. Local unit suite: **398 passed, 29 skipped**; database-dependent units were not configured in this run and must pass in hosted CI. Migration and base seed succeeded against a new isolated loopback regression database. No company or showcase database used.
+- Generated synthetic authentication state and reports are ignored and retained only in local storage; the test cluster and Playwright-managed servers are stopped. Hosted full E2E, database integrations, branding and containers remain pending on the focused PR. Main remains red until a verified fix is explicitly authorized to merge.
 
 - [x] Confirm repository name and sharing permission.
 - [x] Create a separate directory and document demo constraints before implementation.
@@ -69,4 +80,4 @@ The independent repository was initially pushed privately for review and is now 
 
 The first hosted workflow was **skipped as intended** during private review. This is not a passing full CI result; no database/E2E/container verification has been inferred from it. The standard hosted jobs run after explicit public-visibility approval.
 
-Next action: verify the new demo-walkthrough PR independently before merging it. An open-source redistribution license remains the owner's choice. No hosted demo has been deployed.
+Next action: verify the focused hydration fix independently before asking to merge it. An open-source redistribution license remains the owner's choice. No hosted demo has been deployed.

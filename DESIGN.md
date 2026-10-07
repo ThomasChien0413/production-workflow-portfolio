@@ -10,6 +10,8 @@ Home Screen resources use the same centered white `WF` on medium-blue square art
 
 ## Engineering
 
+Subpage placement controls must remain disabled until their own client component is interactive, including the selector as well as the mutation button. Otherwise a selection made on server HTML may not reach React state. The same readiness rule applies to production-status radios and the due-date input. Preserve layouts and workflow permissions. Regression tests hold JavaScript loading at the destination-manager boundary, verify the server controls cannot accept input, then release hydration and complete the real workflow without repeated clicks or synthetic event handlers.
+
 - TypeScript/pnpm monorepo: Next.js web, Fastify REST/WebSocket API, durable background worker, PostgreSQL, shared runtime validation and domain policies.
 - Multiple department identities and subpage grants; API-enforced access; ordered review of 分條申請單; atomic transitions, immutable history, explicit saving and optimistic concurrency.
 - Authenticated saved-sheet PDF generation and private PDF attachments remain separate features. Demo attachment storage uses a local ignored directory/volume; no company bucket or credentials.

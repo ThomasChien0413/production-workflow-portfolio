@@ -24,9 +24,11 @@ async function expectState(page: Page, label: string) {
  * a sheet with none; the 交期 unfolds under its row with 修改.
  */
 async function placeAndSetDueDate(page: Page, dueLocal: string) {
+  await expect(page.locator("#move-sheet-subpage")).toBeEnabled();
   await page.locator("#move-sheet-subpage").selectOption({ label: E2E_SUBPAGE });
   const placed = page.waitForResponse(
     (response) => response.request().method() === "POST" && response.url().endsWith("/subpage"),
+    { timeout: 30_000 },
   );
   await page.getByRole("button", { name: "放入子分頁", exact: true }).click();
   expect((await placed).status()).toBe(200);
@@ -148,7 +150,24 @@ for (const viewport of WORKFLOW_VIEWPORTS) {
       // a subpage and sets the 交期, and whoever may modify it there sets its
       // status.
       const slittingManager = await actor("slittingManager");
-      await slittingManager.goto(`${origin}${sheetPath}`);
+      // Hold hydration deterministically, not with a sleep. The server HTML
+      // must not accept a selection that the client state cannot yet retain.
+      let releaseScripts!: () => void;
+      const scriptsReady = new Promise<void>((resolve) => { releaseScripts = resolve; });
+      await slittingManager.route("**/_next/**/*.js*", async (route) => {
+        await scriptsReady;
+        await route.continue();
+      });
+      try {
+        await slittingManager.goto(`${origin}${sheetPath}`, { waitUntil: "commit" });
+        await expect(slittingManager.locator("#move-sheet-subpage")).toBeVisible();
+        await expect(slittingManager.locator("#move-sheet-subpage")).toBeDisabled();
+        await expect(slittingManager.getByRole("button", { name: "放入子分頁", exact: true })).toBeDisabled();
+      } finally {
+        releaseScripts();
+      }
+      await expect(slittingManager.locator("#move-sheet-subpage")).toBeEnabled();
+      await slittingManager.unroute("**/_next/**/*.js*");
       await expectState(slittingManager, "待生產");
       await expect(slittingManager.getByText(/尚未放入子分頁/)).toBeVisible();
       await expect(slittingManager.getByRole("group", { name: "生產狀態" })).toHaveCount(0);
