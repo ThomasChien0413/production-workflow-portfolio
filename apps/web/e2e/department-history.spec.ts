@@ -10,6 +10,9 @@ const VIEWPORTS = [
 ] as const;
 
 const sheetId = randomUUID();
+// A same-template record makes broad title selectors deterministically unsafe
+// when clearing filters; parallel files may create more of these as well.
+const decoySheetId = randomUUID();
 const searchMarker = `history-browser-${sheetId.slice(0, 8)}`;
 /** CUT's test subpage, the one the sheet is filed in; set in beforeAll. */
 let subpageId = "";
@@ -59,45 +62,48 @@ test.beforeAll(async () => {
     subpageId = fixture!.subpageId;
 
     await sql.begin(async (transaction) => {
-      await transaction`
-        insert into production_sheets (
-          id, sheet_number, template_version_id, origin_department_id,
-          current_department_id, created_by_user_id, assigned_user_id, state,
-          subpage_id,
-          completed_at, archived_at, created_at, updated_at
-        ) values (
-          ${sheetId}, ${sheetId}, ${fixture!.templateVersionId},
-          ${fixture!.departmentId}, ${fixture!.departmentId}, ${fixture!.managerId},
-          ${fixture!.staffId}, 'ARCHIVED', ${fixture!.subpageId},
-          '2026-08-13T01:00:00.000Z', '2026-08-13T02:00:00.000Z', now(), now()
-        )
-      `;
-      await transaction`
-        insert into sheet_values (sheet_id, values, updated_at)
-        values (
-          ${sheetId},
-          ${JSON.stringify({
-            requestDate: "2026-08-13",
-            items: [
-              {
-                specification: searchMarker,
-                material: "E2E 材質",
-                category: "E2E 分類",
-                requiredQuantity: "1",
-                notes: "完工紀錄瀏覽器測試",
-              },
-              ...Array.from({ length: 7 }, () => ({
-                specification: "",
-                material: "",
-                category: "",
-                requiredQuantity: "",
-                notes: "",
-              })),
-            ],
-          })}::jsonb,
-          now()
-        )
-      `;
+      for (const fixtureSheetId of [sheetId, decoySheetId]) {
+        await transaction`
+          insert into production_sheets (
+            id, sheet_number, template_version_id, origin_department_id,
+            current_department_id, created_by_user_id, assigned_user_id, state,
+            subpage_id,
+            completed_at, archived_at, created_at, updated_at
+          ) values (
+            ${fixtureSheetId}, ${fixtureSheetId}, ${fixture!.templateVersionId},
+            ${fixture!.departmentId}, ${fixture!.departmentId}, ${fixture!.managerId},
+            ${fixture!.staffId}, 'ARCHIVED', ${fixture!.subpageId},
+            '2026-08-13T01:00:00.000Z', '2026-08-13T02:00:00.000Z', now(), now()
+          )
+        `;
+        await transaction`
+          insert into sheet_values (sheet_id, values, updated_at)
+          values (
+            ${fixtureSheetId},
+            ${JSON.stringify({
+              requestDate: "2026-08-13",
+              items: [
+                {
+                  specification: fixtureSheetId === sheetId
+                    ? searchMarker : `history-decoy-${decoySheetId}`,
+                  material: "E2E 材質",
+                  category: "E2E 分類",
+                  requiredQuantity: "1",
+                  notes: "完工紀錄瀏覽器測試",
+                },
+                ...Array.from({ length: 7 }, () => ({
+                  specification: "",
+                  material: "",
+                  category: "",
+                  requiredQuantity: "",
+                  notes: "",
+                })),
+              ],
+            })}::jsonb,
+            now()
+          )
+        `;
+      }
     });
   } finally {
     await sql.end();
@@ -109,7 +115,7 @@ test.afterAll(async () => {
   if (!databaseUrl) return;
   const sql = postgres(databaseUrl, { max: 1, prepare: false });
   try {
-    await sql`delete from production_sheets where id = ${sheetId}`;
+    await sql`delete from production_sheets where id in ${sql([sheetId, decoySheetId])}`;
   } finally {
     await sql.end();
   }
@@ -166,8 +172,13 @@ for (const viewport of VIEWPORTS) {
 
       const result =
         viewport.name === "desktop"
-          ? page.locator(".cc-only-wide tbody tr").filter({ hasText: "分條申請單" })
-          : page.locator(".cc-only-narrow article").filter({ hasText: "分條申請單" });
+          ? page.locator(".cc-only-wide tbody tr").filter({
+              has: page.locator(`a[href="/sheets/${sheetId}?from=history"]`),
+            })
+          : page.locator(".cc-only-narrow article").filter({
+              has: page.locator(`a[href="/sheets/${sheetId}?from=history"]`),
+            });
+      await expect(result).toHaveCount(1);
       await expect(result).toBeVisible();
       // Archived 2026-08-13 10:00 Taipei, so deleted one year later.
       await expect(result.getByText(/2027\/8\/13/)).toBeVisible();
@@ -197,8 +208,19 @@ for (const viewport of VIEWPORTS) {
 
       await page.getByRole("button", { name: "清除篩選", exact: true }).click();
       await expect(page).toHaveURL(/\/departments\/cut\/history$/);
+      const visibleRecords = page.locator(
+        viewport.name === "desktop" ? ".cc-only-wide" : ".cc-only-narrow",
+      );
+      await expect(visibleRecords.locator(`a[href="/sheets/${sheetId}?from=history"]`)).toBeVisible();
+      await expect(visibleRecords.locator(`a[href="/sheets/${decoySheetId}?from=history"]`)).toBeVisible();
+      await expect(result).toHaveCount(1);
       await page.goBack();
       await expect(page).toHaveURL(/\/departments\/cut\/history\?.*q=history-browser-/);
+      // URL navigation can precede the refreshed server tree. Verify both the
+      // restored control and filtered data before opening this exact record.
+      await expect(page.getByLabel("關鍵字")).toHaveValue(searchMarker);
+      await expect(page.getByText("共 1 筆完工紀錄")).toBeVisible();
+      await expect(visibleRecords.locator(`a[href="/sheets/${decoySheetId}?from=history"]`)).toHaveCount(0);
 
       await Promise.all([
         page.waitForURL(new RegExp(`/sheets/${sheetId}\\?from=history$`)),

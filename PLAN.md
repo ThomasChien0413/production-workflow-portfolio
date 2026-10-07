@@ -9,11 +9,14 @@ Date: 2026-10-07 (Pacific/Auckland). Repository: `production-workflow-portfolio`
 | Independent sanitized portfolio setup | GPT | Published and verified | Public portfolio only; merged main `304e58e` passed verify, branding and containers on run `37571333913` |
 | Home Screen icon regression | GPT | Merged and verified | PR #1 and its merged main `304e58e` passed all three CI jobs |
 | Interview-ready demo walkthrough | GPT | Merged; main regression tracked below | PR #2 passed all three jobs on `37574224587`, merged as `08d3509`; subsequent main failed the mobile placement flaky-test gate |
-| Subpage-placement hydration regression | GPT | Active | `codex/portfolio-workflow-hydration`: production-actions readiness and mobile/desktop workflow regression; portfolio only |
+| Subpage-placement hydration regression | GPT | Merged and verified on PR | PR #3 passed all three jobs on `37579926960`, merged as `2f352bd`; both reviewed workflows passed on main `37589232254` |
+| History browser record identity regression | GPT | Active | `codex/portfolio-history-record-selector`: fixture-scoped history locators and deterministic duplicate-template coverage; no application behavior changes |
 
 The user confirms permission to share code, all sheets and letterheads, while removing operational details. The original company repository, Git history, runner, server, database, DNS and credentials must remain unchanged.
 
 ## Checklist
+
+Main run `37589232254` failed a different flaky history test: after clearing filters and browser Back, its template-name locator temporarily matched two distinct sheets. Branding passed, containers were skipped, and both hydration-fixed production workflows passed. Scope result actions to the fixture sheet ID, keep a same-template decoy in the history dataset, and wait for restored rendered filters/results as well as the URL. Do not silence strict-mode errors with first()/nth(), serialize CI, or relax fail-on-flaky checks.
 
 PR #2 was squash-merged as `08d3509` after all PR checks passed. Main run `37577770011` failed the strict flaky-test gate: mobile subpage placement timed out on its first attempt and passed on retry; branding passed and containers were skipped. Investigate the unguarded placement selector before hydration; retain retry diagnostics, fail-on-flaky behavior and every workflow assertion. No company changes are authorized by this fix.
 
@@ -80,4 +83,13 @@ The independent repository was initially pushed privately for review and is now 
 
 The first hosted workflow was **skipped as intended** during private review. This is not a passing full CI result; no database/E2E/container verification has been inferred from it. The standard hosted jobs run after explicit public-visibility approval.
 
-Next action: verify the focused hydration fix independently before asking to merge it. An open-source redistribution license remains the owner's choice. No hosted demo has been deployed.
+### History selector fix validation — 2026-10-07
+
+- Result actions target the exact fixture sheet-detail link, never a shared template title or first/nth match. Browser Back waits for the restored keyword, one-result count and absence of the decoy before opening the fixture.
+- A second archived same-template sheet is created transactionally with a distinct synthetic value marker. Clearing filters must show both records while the fixture-scoped locator still matches exactly one. Cleanup deletes only the two fixture IDs.
+- Red/green proof: restoring the previous desktop title selector reliably fails with **expected 1, received 2** after reset. The fixed history tests pass three repetitions on each viewport (**7/7 including setup**, two workers, no retries).
+- Combined history and reviewed-production workflows also pass three repetitions per viewport: **13/13 including setup**, two workers, no retries. Includes existing accessibility, search, sorting, download, reset, navigation and read-only detail assertions.
+- Typecheck, lint, publication scan and **21 operations tests** pass; fresh isolated local database migration/seed passed. No application source, UI layout, API, schema, template, permission or CI-gate changes. Full hosted units/integrations/E2E/builds/containers are pending on the fix PR, not claimed from earlier runs.
+- Generated browser authentication/report files remain ignored and are retained only in local storage. Playwright-managed servers and the isolated PostgreSQL cluster are stopped. Company repository/runtime/data remain untouched.
+
+Next action: verify the focused history-record selector fix independently before asking to merge it. An open-source redistribution license remains the owner's choice. No hosted demo has been deployed.
