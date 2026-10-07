@@ -6,8 +6,9 @@ Date: 2026-10-07 (Pacific/Auckland). Repository: `production-workflow-portfolio`
 
 | Work | Owner | Status | Scope |
 | --- | --- | --- | --- |
-| Independent sanitized portfolio setup | GPT | Public CI verification active | User authorized public visibility on 2026-10-07; publish only this repository, inspect full hosted CI and record actual results |
-| Home Screen icon regression | GPT | Active | `codex/portfolio-home-screen-icon`: manifest, neutral 512px PNG route, anonymous resource regression test and public CI; keep company app unchanged |
+| Independent sanitized portfolio setup | GPT | Published and verified | Public portfolio only; merged main `304e58e` passed verify, branding and containers on run `37571333913` |
+| Home Screen icon regression | GPT | Merged | PR #1 passed all public CI jobs (`37569075198`) and was squash-merged as `304e58e`; main verification is running |
+| Interview-ready demo walkthrough | GPT | Active | `codex/portfolio-demo-walkthrough`: optional local synthetic accounts/subpages, repeat-safe fixture tests, README badge/examples and handoff; no company data or hosting |
 
 The user confirms permission to share code, all sheets and letterheads, while removing operational details. The original company repository, Git history, runner, server, database, DNS and credentials must remain unchanged.
 
@@ -22,7 +23,7 @@ The user confirms permission to share code, all sheets and letterheads, while re
 - [x] Preserve third-party notices and complete initial publication-content review; manual owner review remains required.
 - [x] Run local operations/unit/type/lint/build checks; record unavailable database/browser/container verification honestly.
 - [x] Initialize fresh Git history and create/push a private repository for review.
-- [ ] Obtain explicit public-visibility approval; then verify public CI and new branding references.
+- [x] Obtain explicit public-visibility approval; then verify public CI and new branding references.
 
 ## Handoff requirements
 
@@ -52,8 +53,20 @@ Repository visibility is now public. Run `37567823021` passed branding, migratio
 
 Local icon-fix verification: typecheck, lint, publication scan, optimized build and all 20 operations tests pass. The signed-out suite has **3 passing tests**: unchanged mobile/desktop visual references plus manifest and PNG signature/dimension checks for 192px, 512px and 180px Apple resources. The 512px route is statically generated; the generated blue-and-white icon was visually inspected. Full public CI remains pending on the fix branch; do not describe container gates or main as green yet.
 
-The independent repository is created and pushed privately at `https://github.com/ThomasChien0413/production-workflow-portfolio`. Its initial sanitized root commit is `0b7e432`; it does not include the original company's Git history. Repository visibility is verified private, with **zero self-hosted runners and zero Actions secrets**. The original company repository remains private and its source checkout unchanged.
+Superseding result: icon PR #1 passed **verify, branding and containers** on run `37569075198`, then merged on owner authorization. Merged main also passed all three jobs on run `37571333913`. The next branch prepares optional demo fixtures and portfolio presentation; its checks must be recorded independently.
+
+### Demo walkthrough branch handoff
+
+- Optional demo initialization is transactional/advisory-locked and emits one synthetic-initialization audit marker. Five sample accounts, six subpages, independent identity grants and eligible template selections; no saved orders or fabricated approvals. Repetition preserves changed credentials, deactivation and permissions.
+- Isolated fixture verification: **4 tests passed**, covering target/pristine-workspace guards, simultaneous calls, repeat preservation, eligible templates, audit metadata and refusal without partial writes. Existing PostgreSQL 17 binaries were found outside PATH; a new ignored, loopback-only cluster was used, never a company database.
+- Typecheck, lint, publication scan and **21 operations tests** pass. A separate print-styles regression reserves one collapsed-border width inside the printable content box without changing immutable template definitions.
+- Actual synthetic dashboard/subpage and blank desktop/mobile form captures are reviewed. The blank saved-sheet PDF was generated through the authenticated application endpoint, checked with Poppler (one A4 landscape page) and visually reviewed after correcting a clipped right border. Pending signature cells are blank and the state watermark remains visible. A real authorized WebSocket snapshot was required before the final capture.
+- README now has a main CI badge, engineering-decision entry points, gallery, sample PDF and optional demo setup instructions. No cloud deployment, company runner or artifact-upload workaround added.
+- Full new-branch public CI and profile pinning are not yet complete. Do not treat prior main CI as verification of these new changes. Stop temporary local capture processes and the isolated database after verification.
+- Complete local suite with the dedicated optional-demo test target: **399 passed, 28 skipped** (47 passing/22 skipped files). Remaining skips are the ordinary database integration suite, which runs in public CI. Optimized web build also passes. Generated PDF preview was re-rendered and visually verified with its right border fully visible.
+
+The independent repository was initially pushed privately for review and is now public at `https://github.com/ThomasChien0413/production-workflow-portfolio`. Its initial sanitized root commit is `0b7e432`; it does not include the original company's Git history. Initial isolation checks found **zero self-hosted runners and zero Actions secrets**. The original company repository remains private and its source checkout unchanged.
 
 The first hosted workflow was **skipped as intended** during private review. This is not a passing full CI result; no database/E2E/container verification has been inferred from it. The standard hosted jobs run after explicit public-visibility approval.
 
-Owner next action: review the included form assets and README/provenance, choose whether to grant an open-source license, then explicitly authorize public visibility. After publication, inspect the hosted CI results and resolve any platform/database/container failures before advertising verification as complete. No hosted demo has been deployed.
+Next action: verify the new demo-walkthrough PR independently before merging it. An open-source redistribution license remains the owner's choice. No hosted demo has been deployed.

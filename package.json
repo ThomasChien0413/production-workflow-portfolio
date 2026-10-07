@@ -24,6 +24,8 @@
     "db:generate": "pnpm --filter @workflow/database generate",
     "db:migrate": "pnpm --filter @workflow/database migrate",
     "db:seed": "pnpm --filter @workflow/database seed",
+    "db:demo": "pnpm --filter @workflow/database demo",
+    "demo:capture": "node scripts/demo/capture.mjs",
     "db:verify": "pnpm --filter @workflow/database verify",
     "db:verify-runtime": "pnpm --filter @workflow/database verify:runtime",
     "ops:validate-example": "node scripts/operations/validate-production-env.mjs deploy/production.env.example --allow-placeholders",

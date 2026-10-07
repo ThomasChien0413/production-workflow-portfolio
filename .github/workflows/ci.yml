@@ -33,6 +33,7 @@ jobs:
       NODE_ENV: test
       DATABASE_URL: postgres://workflow:public-demo-test@127.0.0.1:5432/workflow_demo_test
       TEST_DATABASE_URL: postgres://workflow:public-demo-test@127.0.0.1:5432/workflow_demo_test
+      DEMO_TEST_DATABASE_URL: postgres://workflow:public-demo-test@127.0.0.1:5432/workflow_demo_fixture_test
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -52,6 +53,13 @@ jobs:
       - run: pnpm db:seed
       - run: pnpm db:verify
       - run: pnpm db:verify-runtime
+      - name: Prepare isolated optional-demo fixture database
+        env:
+          PGPASSWORD: public-demo-test
+        run: |
+          createdb --host=127.0.0.1 --username=workflow workflow_demo_fixture_test
+          DATABASE_URL="$DEMO_TEST_DATABASE_URL" pnpm db:migrate
+          DATABASE_URL="$DEMO_TEST_DATABASE_URL" pnpm db:seed
       - run: pnpm test
       - run: pnpm build:web
       - run: pnpm --filter @workflow/web exec playwright install --with-deps chromium
