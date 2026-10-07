@@ -2,6 +2,31 @@ import { fileURLToPath } from "node:url";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+test("Home Screen manifest exposes real neutral PNGs at both required sizes", async ({ request }) => {
+  const response = await request.get("/manifest.webmanifest");
+  expect(response.ok()).toBe(true);
+  const manifest = await response.json();
+  expect(manifest).toMatchObject({
+    short_name: "Workflow Portfolio",
+    display: "standalone",
+    start_url: "/",
+    icons: expect.arrayContaining([
+      { src: "/icon", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icons/icon-512", sizes: "512x512", type: "image/png", purpose: "any" },
+    ]),
+  });
+  for (const [path, size] of [["/icon", 192], ["/icons/icon-512", 512], ["/apple-icon", 180]] as const) {
+    const icon = await request.get(path);
+    expect(icon.ok(), path).toBe(true);
+    expect(icon.headers()["content-type"]).toContain("image/png");
+    const png = await icon.body();
+    expect(png.subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+    expect(png.toString("ascii", 12, 16)).toBe("IHDR");
+    expect(png.readUInt32BE(16), `${path} width`).toBe(size);
+    expect(png.readUInt32BE(20), `${path} height`).toBe(size);
+  }
+});
+
 for (const viewport of [
   { name: "mobile", width: 390, height: 844 },
   { name: "desktop", width: 1366, height: 900 },
