@@ -7,6 +7,7 @@ Date: 2026-10-07 (Pacific/Auckland). Repository: `production-workflow-portfolio`
 | Work | Owner | Status | Scope |
 | --- | --- | --- | --- |
 | Independent sanitized portfolio setup | GPT | Public CI verification active | User authorized public visibility on 2026-10-07; publish only this repository, inspect full hosted CI and record actual results |
+| Home Screen icon regression | GPT | Active | `codex/portfolio-home-screen-icon`: manifest, neutral 512px PNG route, anonymous resource regression test and public CI; keep company app unchanged |
 
 The user confirms permission to share code, all sheets and letterheads, while removing operational details. The original company repository, Git history, runner, server, database, DNS and credentials must remain unchanged.
 
@@ -44,6 +45,12 @@ Not verified here: migrations against PostgreSQL, database integration tests, au
 ### Publication authorization — 2026-10-07
 
 The owner explicitly approved proceeding with public visibility and full CI after the private review handoff. This authorizes publication of this independent snapshot only—not the company repository, runtime, data, credentials, runner or deployment. Verify public hosted CI before marking this work complete.
+
+### First public run and icon correction
+
+Repository visibility is now public. Run `37567823021` passed branding, migrations, database verification, unit/integration tests, security checks and the web build. Full browser verification had **279 passed and 1 failed**: the Home Screen manifest lacked a 512×512 icon. Container checks were dependency-skipped, not verified. The owner authorized adding the missing icon and rerunning CI. Keep the existing 512px assertion and test real PNG dimensions instead of weakening the requirement.
+
+Local icon-fix verification: typecheck, lint, publication scan, optimized build and all 20 operations tests pass. The signed-out suite has **3 passing tests**: unchanged mobile/desktop visual references plus manifest and PNG signature/dimension checks for 192px, 512px and 180px Apple resources. The 512px route is statically generated; the generated blue-and-white icon was visually inspected. Full public CI remains pending on the fix branch; do not describe container gates or main as green yet.
 
 The independent repository is created and pushed privately at `https://github.com/ThomasChien0413/production-workflow-portfolio`. Its initial sanitized root commit is `0b7e432`; it does not include the original company's Git history. Repository visibility is verified private, with **zero self-hosted runners and zero Actions secrets**. The original company repository remains private and its source checkout unchanged.
 

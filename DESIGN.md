@@ -6,6 +6,8 @@ An independent, runnable demonstration adapted with the owner's permission from 
 
 Retain the existing Traditional Chinese, blue-and-white responsive component system. Rebrand only application identity/metadata/icons with a neutral `Workflow Portfolio` mark at the existing dimensions; do not rearrange form layouts or alter business rules. Company artwork inside explicitly authorized letterheads remains form content, not application branding.
 
+Home Screen resources use the same centered white `WF` on medium-blue square artwork: 192×192 PNG at `/icon`, 512×512 PNG at `/icons/icon-512`, and 180×180 Apple PNG at `/apple-icon`. The manifest advertises both 192 and 512 sizes with purpose `any`; no maskable claim is made. Generate the missing 512 resource statically using the existing neutral icon proportions. Anonymous resource tests validate MIME, PNG signature and actual dimensions; no login or database is required.
+
 ## Engineering
 
 - TypeScript/pnpm monorepo: Next.js web, Fastify REST/WebSocket API, durable background worker, PostgreSQL, shared runtime validation and domain policies.
