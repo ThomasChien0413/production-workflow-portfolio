@@ -6,7 +6,7 @@ Date: 2026-10-07 (Pacific/Auckland). Repository: `production-workflow-portfolio`
 
 | Work | Owner | Status | Scope |
 | --- | --- | --- | --- |
-| Independent sanitized portfolio setup | GPT | Active | Reviewed tracked snapshot, demo branding/configuration, public-safe CI, docs/notices, local tests and private repository handoff |
+| Independent sanitized portfolio setup | GPT | Awaiting owner publication review | Reviewed tracked snapshot, demo branding/configuration, public-safe CI, docs/notices, local tests and private repository handoff |
 
 The user confirms permission to share code, all sheets and letterheads, while removing operational details. The original company repository, Git history, runner, server, database, DNS and credentials must remain unchanged.
 
@@ -20,7 +20,7 @@ The user confirms permission to share code, all sheets and letterheads, while re
 - [x] Replace company-runner CI with isolated GitHub-hosted, public-only jobs and preserve security/test gates.
 - [x] Preserve third-party notices and complete initial publication-content review; manual owner review remains required.
 - [x] Run local operations/unit/type/lint/build checks; record unavailable database/browser/container verification honestly.
-- [ ] Initialize fresh Git history and create/push a private repository for review.
+- [x] Initialize fresh Git history and create/push a private repository for review.
 - [ ] Obtain explicit public-visibility approval; then verify public CI and new branding references.
 
 ## Handoff requirements
@@ -41,4 +41,8 @@ Not verified here: migrations against PostgreSQL, database integration tests, au
 
 ## Next action
 
-Create/push the independent private repository for owner review. Review the included form assets and README/provenance, choose whether to grant an open-source license, then explicitly authorize public visibility. After publication, inspect the hosted CI results and resolve any platform/database/container failures before advertising verification as complete.
+The independent repository is created and pushed privately at `https://github.com/ThomasChien0413/production-workflow-portfolio`. Its initial sanitized root commit is `0b7e432`; it does not include the original company's Git history. Repository visibility is verified private, with **zero self-hosted runners and zero Actions secrets**. The original company repository remains private and its source checkout unchanged.
+
+The first hosted workflow was **skipped as intended** during private review. This is not a passing full CI result; no database/E2E/container verification has been inferred from it. The standard hosted jobs run after explicit public-visibility approval.
+
+Owner next action: review the included form assets and README/provenance, choose whether to grant an open-source license, then explicitly authorize public visibility. After publication, inspect the hosted CI results and resolve any platform/database/container failures before advertising verification as complete. No hosted demo has been deployed.
