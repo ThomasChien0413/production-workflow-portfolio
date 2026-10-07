@@ -19,7 +19,8 @@ export function documentStyles(page: TemplatePrintLayout): string {
     "html,body{margin:0;padding:0;color:#111;background:#fff;font-family:\"Noto Sans CJK TC\",\"Noto Sans TC\",\"Microsoft JhengHei\",sans-serif;font-size:10pt;line-height:1.35}",
     "body{-webkit-print-color-adjust:exact;print-color-adjust:exact}",
     ".document{position:relative;width:100%}",
-    ".content{position:relative;z-index:1}",
+    // Collapsed right-hand strokes can otherwise sit outside Chromium's clip.
+    ".content{position:relative;z-index:1;padding-right:.35mm}",
     ".watermark{position:fixed;z-index:0;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-24deg);font-size:54pt;font-weight:700;letter-spacing:.18em;color:rgba(0,0,0,.075);white-space:nowrap}",
     ".header{display:grid;grid-template-columns:1fr 2fr 1fr;align-items:end;min-height:15mm;margin-bottom:2mm}",
     ".header h1{margin:0;text-align:center;font-size:18pt;font-weight:500}",

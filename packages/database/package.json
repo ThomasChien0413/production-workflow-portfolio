@@ -21,6 +21,7 @@
     "generate": "drizzle-kit generate",
     "migrate": "tsx src/scripts/migrate.ts",
     "seed": "tsx src/scripts/seed.ts",
+    "demo": "tsx src/scripts/demo.ts",
     "verify": "tsx src/scripts/verify.ts",
     "verify:runtime": "tsx src/scripts/verify-runtime.ts"
   },
