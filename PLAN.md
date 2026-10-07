@@ -6,7 +6,7 @@ Date: 2026-10-07 (Pacific/Auckland). Repository: `production-workflow-portfolio`
 
 | Work | Owner | Status | Scope |
 | --- | --- | --- | --- |
-| Independent sanitized portfolio setup | GPT | Awaiting owner publication review | Reviewed tracked snapshot, demo branding/configuration, public-safe CI, docs/notices, local tests and private repository handoff |
+| Independent sanitized portfolio setup | GPT | Public CI verification active | User authorized public visibility on 2026-10-07; publish only this repository, inspect full hosted CI and record actual results |
 
 The user confirms permission to share code, all sheets and letterheads, while removing operational details. The original company repository, Git history, runner, server, database, DNS and credentials must remain unchanged.
 
@@ -40,6 +40,10 @@ Record actual checks, remaining work and publication/audit limitations. Do not c
 Not verified here: migrations against PostgreSQL, database integration tests, authenticated/full Linux E2E and all container builds. Docker/PostgreSQL command-line tools are unavailable on this machine. Public CI includes these gates, but is intentionally skipped during private review and must be checked after publication. Existing Linux blank-form references are retained, not claimed freshly verified.
 
 ## Next action
+
+### Publication authorization — 2026-10-07
+
+The owner explicitly approved proceeding with public visibility and full CI after the private review handoff. This authorizes publication of this independent snapshot only—not the company repository, runtime, data, credentials, runner or deployment. Verify public hosted CI before marking this work complete.
 
 The independent repository is created and pushed privately at `https://github.com/ThomasChien0413/production-workflow-portfolio`. Its initial sanitized root commit is `0b7e432`; it does not include the original company's Git history. Repository visibility is verified private, with **zero self-hosted runners and zero Actions secrets**. The original company repository remains private and its source checkout unchanged.
 
